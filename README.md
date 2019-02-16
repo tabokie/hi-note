@@ -6,11 +6,11 @@ project still in plan. For now, it's a simple markdown notes archive ;).
 
 ## Feature (in-plan)
 
-* [ ] Comfortable grammar that combines writing's self-explained logic with program's loose-coupled structuring variety.
-* [ ] Light-Weight compiler that parse hi-note program into compact notes and meta data. Meta data includes modification time, tag, auther, etc. Also, its fallback version can analyse markdown and plain text.
-* [ ] Storage backend with support of analytical query.
-* [ ] Documentation backend that convert structured notes into well-laid docs.
-* [ ] Handy toolset including memo alert, plans, smart editor, etc.
+* [ ] Comfortable grammar that combines writing's self-explained logic with program's loose-coupled structuring ability.
+* [ ] Light-Weight compiler that parses hi-note program into compact notes and meta data. Meta data includes modification time, tag, auther, etc. Also, its fallback version can analyse markdown and plain text.
+* [ ] Storage backend with support for analytical query.
+* [ ] Documentation backend that converts internal notes into well-laid docs.
+* [ ] Handy toolsets including memo alert, plans, smart editor, etc.
 
 ## Notes
 
