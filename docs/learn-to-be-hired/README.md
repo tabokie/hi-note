@@ -2,6 +2,13 @@
     -   [Network](#network)
     -   [Interview Record](#interview-record)
         -   [Bytedance](#bytedance)
+    -   [Job Experience](#job-experience)
+        -   [Transfer to USA](#transfer-to-usa)
+
+-   [Learn to be Hired](#learn-to-be-hired)
+    -   [Network](#network)
+    -   [Interview Record](#interview-record)
+        -   [Bytedance](#bytedance)
 
 Learn to be Hired
 =================
@@ -71,3 +78,24 @@ Interview Record
 offer at Hangzhou and transfer to Beijing for it's more system-related.
 
 focus on concrete knowledge, less theory talk.
+
+Job Experience
+--------------
+
+### Transfer to USA
+
+**Option A: Master Degree**
+
+**Option B: Company Transfer**
+
+-   L visa: bound to employer
+-   Microsoft: senior level (2-3 year), internal interview, Bing team
+    (base at Suzhou)
+-   Hulu
+-   Airbnb, Amazon, LinkedIn, Google
+
+**Option C: Direct Apply**
+
+-   h1b: at least Oct
+-   temporary transfer (Australia)
+-   options: Microsoft, Amazon, Pony.ai
