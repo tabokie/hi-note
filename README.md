@@ -17,3 +17,4 @@ project still in plan. For now, it's a simple markdown notes archive ;).
 Before hi-note is ready for use, I put my on-going notes in Markdown here.
 
 * [Learn-to-be-Hired](./docs/learn-to-be-hired)
+* [Learn-Language](./docs/learn-language)

@@ -1,20 +1,44 @@
 -   [Learn to be Hired](#learn-to-be-hired)
     -   [Network](#network)
+        -   [Transport Layer](#transport-layer)
     -   [Interview Record](#interview-record)
         -   [Bytedance](#bytedance)
     -   [Job Experience](#job-experience)
         -   [Transfer to USA](#transfer-to-usa)
-
--   [Learn to be Hired](#learn-to-be-hired)
-    -   [Network](#network)
-    -   [Interview Record](#interview-record)
-        -   [Bytedance](#bytedance)
 
 Learn to be Hired
 =================
 
 Network
 -------
+
+### Transport Layer
+
+**HTTP connection**
+
+-   HTTP/0.9 short connection
+    -   each request = { DNS -\> three-step -\> transport -\> four-step
+        }
+-   HTTP/1.0 durable connection
+    -   Connection Field = Keep-Alive / Close
+    -   timeout = 5, max = 100
+    -   Implementation
+        -   1.  hold active processes until exaustion of pid
+
+        -   2.  IO multuplexing
+
+        -   3.  hold thread and buffer request until data is ready
+
+    -   Application
+        -   1.  response on request
+
+        -   2.  (长轮询) on request, server will wait for data ready or
+                timeout
+
+        -   3.  (Comet HTTP stream) continously send data to client
+-   HTTP/1.1 pipelined connection
+    -   default Keep-Alice
+    -   Head-of-Line-Blocking(HOLB) problem
 
 Interview Record
 ----------------
