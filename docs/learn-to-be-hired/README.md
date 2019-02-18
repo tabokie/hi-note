@@ -2,9 +2,22 @@
     -   [Network](#network)
         -   [Transport Layer](#transport-layer)
         -   [Application Layer](#application-layer)
-    -   [Operating System / Linux](#operating-system-linux)
+    -   [Operating System & Linux](#operating-system-linux)
+        -   [Memory](#memory)
+        -   [Process](#process)
+            -   [Process Management](#process-management)
+            -   [Process Communication](#process-communication)
+        -   [Network IO](#network-io)
+        -   [Filesystem](#filesystem)
     -   [Language](#language)
         -   [C++](#c)
+        -   [Java](#java)
+    -   [Database](#database)
+    -   [Parallel Programming](#parallel-programming)
+    -   [System](#system)
+    -   [Algorithm](#algorithm)
+        -   [BigData and Online
+            Algorithm](#bigdata-and-online-algorithm)
     -   [Interview Record](#interview-record)
         -   [Bytedance](#bytedance)
             -   [19-01 Backend Develop Intern at
@@ -218,13 +231,101 @@ Network
     -   500: internal server error
     -   503: service unavailable
 
-Operating System / Linux
+Operating System & Linux
 ------------------------
+
+### Memory
+
+### Process
+
+#### Process Management
+
+-   State
+    -   running
+    -   uninterruptible sleep (in IO)
+    -   interruptible sleep (wait for event)
+    -   zombie (terminated but not reaped)
+        -   parent didn't call wait() to recycle the pid
+        -   cause possible exaustion
+        -   kill parent to solve
+    -   stopped
+    -   orphan
+        -   parent already exit
+        -   will be adopted by init process (pid=1)
+
+#### Process Communication
+
+-   IPC
+    -   pipe
+        -   fd\[0\] read, fd\[1\] write
+        -   semi-duplex
+        -   only between parent-child process
+    -   fifo
+        -   queue read request and write request
+    -   message queue
+        -   independent from process
+        -   non-blocking
+        -   support selectively receive
+    -   semaphore
+    -   shared memory
+    -   socket
+        -   allow cross machine
+-   Signal
+    -   stored in process local bitmap
+    -   process will check bitmap when returning to user mode (due to
+        interrupt or syscall), run handler in user context
+    -   for interruptible sleeping, `longjmp` and exit syscall with err
+    -   `Ctrl+C`
+        -   SIGINT
+        -   `signal(SIGINT, my_handler)` to register
+
+### Network IO
+
+-   blocking
+    -   socket::recv, wait for kernel to buffer a complete message
+-   non-blocking
+    -   return err instantly
+-   multiplexing
+    -   select(readset, write, exception)
+        -   block until any socket is ready,(wait for fd), then use recv
+            (need pool each fd) (two syscall in total)
+    -   poll(pollfd\*)
+        -   same as select but without readset limitation
+    -   epoll `epoll_ctl(epoll_create(), event); epoll_wait`
+        -   mmap
+        -   level trigger
+            -   ceased only when event is processed(state turns to
+                ready), can read in steps
+        -   edge trigger
+            -   need consume at first sight or lose it
+            -   only support non-blocking socket, to avoid blocking at
+                file end (non-blocking will return EAGAIN)
+-   signal-driven
+-   async
+    -   aio\_read to let kernel signal user
+
+### Filesystem
 
 Language
 --------
 
 ### C++
+
+### Java
+
+Database
+--------
+
+Parallel Programming
+--------------------
+
+System
+------
+
+Algorithm
+---------
+
+### BigData and Online Algorithm
 
 Interview Record
 ----------------
