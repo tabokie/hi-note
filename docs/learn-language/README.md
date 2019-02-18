@@ -104,3 +104,11 @@ Go
 
 Rust
 ----
+
+### Quiz
+
+* ```rust
+let val = loop {
+    if x > 0 { break -1; }
+    0
+}
