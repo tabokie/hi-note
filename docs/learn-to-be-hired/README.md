@@ -21,7 +21,7 @@
     -   [Database](#database)
     -   [Parallel Programming](#parallel-programming)
         -   [Paradigm](#paradigm)
-    -   [System](#system)
+    -   [Systems](#systems)
     -   [Algorithm](#algorithm)
         -   [BigData and Online
             Algorithm](#bigdata-and-online-algorithm)
@@ -323,9 +323,6 @@ Language
 
 ### Java
 
-类加载 1.7/1.8, chm, aqs LongAdder Object clone() shallow copy equals():
-not the same class
-
 -   Basic
     -   `native`
     -   `goto`: not used but reserved
@@ -333,6 +330,7 @@ not the same class
         -   char = 16-bit
         -   no unsigned integer type
         -   String: support switch case semantics
+        -   long: don't support switch case
     -   wrapping class
         -   Constant and Dynamic instance
             -   created through literal
@@ -341,6 +339,13 @@ not the same class
         -   `Integer`
             -   -128 \~ 127 is constant in heap ( if created through
                 literal )
+        -   `String`
+            -   `intern()`
+            -   `StringBuffer` is thread-safe
+        -   final content
+            -   easy to cache hash value
+            -   possible to leverate constant pool
+            -   thread safety
     -   generic type
         -   `Generic` behaves like `Generic<Object>` with uncheck
             warning
@@ -367,6 +372,18 @@ not the same class
             -   can't be generic class
     -   closure
     -   Reference (4 types)
+-   Class
+    -   Type
+        -   Abstract Class
+        -   Interface
+            -   default method
+    -   Inheritance
+        -   Override
+        -   Overload
+    -   Object
+        -   `clone()`: shallow copy
+        -   `equals()`: type
+        -   `toString()`: name + @ + hash
 -   Design Pattern
     -   Single Instance
     -   Factory and abstract factory
@@ -393,16 +410,21 @@ not the same class
     -   ThreadPool
         -   increasing strategy and denial strategy
     -   juc
+    -   Atomic
+        -   `AtomicLong` versus `LongAdder`
+            -   `Cell`
+    -   `AbstractQueuedSynchronizer` (aqs)
 -   Network
     -   BIO and NIO and AIO and Socket
         -   netty
-            -     1 channelhandler负责请求就绪时的io响应。
-                      2 bytebuf支持零拷贝，通过逻辑buff合并实际buff。
-                      3 eventloop线程组负责实现线程池，任务队列里就是io请求任务，类似线程池调度执行。
-                      4 acceptor接收线程负责接收tcp请求，并且注册任务到队列里。
+            -   1 channelhandler负责请求就绪时的io响应。
+                    2 bytebuf支持零拷贝，通过逻辑buff合并实际buff。
+                    3 eventloop线程组负责实现线程池，任务队列里就是io请求任务，类似线程池调度执行。
+                    4 acceptor接收线程负责接收tcp请求，并且注册任务到队列里。
 -   RTTI and Reflection
     -   RTTI
         -   no generic information
+        -   `Class.forName(_name)`
     -   serialize
         -   `Serializable`
             -   parent must be Serializable or have default ctor
@@ -410,12 +432,15 @@ not the same class
             -   not serialized (use default value like null)
 -   JVM
     -   Java -(`JDK`)-\> ByteCode -(`JVM`)-\> MachineCode
+    -   ClassLoader
     -   g1 collector
     -   garbage collection
         -   `finalize()`
         -   `System.gc()`
         -   ways to be old
 -   Spring
+-   Project
+    -   `chm`: microsoft, html
 
 Database
 --------
@@ -439,8 +464,8 @@ Parallel Programming
             -   state in closure
     -   control flow is consistent with logical flow
 
-System
-------
+Systems
+-------
 
 Algorithm
 ---------

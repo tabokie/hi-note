@@ -6,6 +6,7 @@
         -   [Garbage Collection](#garbage-collection)
         -   [Parallel Programming](#parallel-programming-1)
     -   [Rust](#rust)
+        -   [Basic](#basic)
         -   [Quiz](#quiz)
 
 Learn Language
@@ -105,6 +106,13 @@ Go
 
 Rust
 ----
+
+### Basic
+
+-   variable
+    -   name shadowing by `let`
+    -   `const`: annotated, macro
+    -   statement and expression
 
 ### Quiz
 
