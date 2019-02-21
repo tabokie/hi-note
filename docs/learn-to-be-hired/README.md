@@ -110,6 +110,8 @@ Network
                 contrained by quad
             -   therefore response can be sent from different port
         -   NAT by UDP
+            -   TCP wraps UDP (reliable as a whole) is better than TCP
+                wraps TCP
 -   design reliable protocol on UDP
     -   principle: validity(real-time), reliability, fairness
     -   case study
@@ -321,6 +323,100 @@ Language
 
 ### Java
 
+类加载 1.7/1.8, chm, aqs LongAdder Object clone() shallow copy equals():
+not the same class
+
+-   Basic
+    -   `native`
+    -   `goto`: not used but reserved
+    -   primitive type
+        -   char = 16-bit
+        -   no unsigned integer type
+        -   String: support switch case semantics
+    -   wrapping class
+        -   Constant and Dynamic instance
+            -   created through literal
+            -   compare with literal is reduced to value
+            -   compare with dynamic object is reduced to address
+        -   `Integer`
+            -   -128 \~ 127 is constant in heap ( if created through
+                literal )
+    -   generic type
+        -   `Generic` behaves like `Generic<Object>` with uncheck
+            warning
+        -   `Generic<?>` container can return `Object`, can't set, even
+            with restraint
+        -   generic type casting
+            -   泛型擦除, cast to `Object`
+            -   cast to restricted `Wrapper<T extends Base>`
+        -   array with generic type
+            -   `Wrapper<?>[] arr = new Wrap<?>[]`
+    -   type inference
+        -   `ok ? x : y` will appear maximum type, favor int over
+            Integer
+            -   will automatically unbox both operators
+    -   exception
+        -   throw - try - catch - finally
+            -   finally can override return value, skipped when `exit`
+        -   try - with - resource
+            -   `AutoCloseable`
+            -   `try ( resource = new Resource() ) { }`
+        -   ascending chained catch
+        -   static exception declaration
+        -   `Exception`
+            -   can't be generic class
+    -   closure
+    -   Reference (4 types)
+-   Design Pattern
+    -   Single Instance
+    -   Factory and abstract factory
+    -   ClassLoader
+-   Standard Data Structure
+    -   `fail-fast`: throw `ConcurrentModificationException` on
+        concurrent access
+        -   `modCount`
+    -   `copy-on-write`: lock when applying modification
+        -   `CopyOnWriteArrayList`
+    -   Iterable and Iterator
+        -   `iterator()`
+        -   `remove()`: delete last element returned by `next()`
+    -   HashMap
+        -   Collision
+    -   ArrayList
+    -   ThreadSafe
+-   Parallel Programming
+    -   Thread
+        -   `run()`, `start()`, `yield()`
+    -   Lock
+        -   `Object`: `wait()`, `notify()`
+    -   Handler and Message Queue
+    -   ThreadPool
+        -   increasing strategy and denial strategy
+    -   juc
+-   Network
+    -   BIO and NIO and AIO and Socket
+        -   netty
+            -     1 channelhandler负责请求就绪时的io响应。
+                      2 bytebuf支持零拷贝，通过逻辑buff合并实际buff。
+                      3 eventloop线程组负责实现线程池，任务队列里就是io请求任务，类似线程池调度执行。
+                      4 acceptor接收线程负责接收tcp请求，并且注册任务到队列里。
+-   RTTI and Reflection
+    -   RTTI
+        -   no generic information
+    -   serialize
+        -   `Serializable`
+            -   parent must be Serializable or have default ctor
+        -   `transient`
+            -   not serialized (use default value like null)
+-   JVM
+    -   Java -(`JDK`)-\> ByteCode -(`JVM`)-\> MachineCode
+    -   g1 collector
+    -   garbage collection
+        -   `finalize()`
+        -   `System.gc()`
+        -   ways to be old
+-   Spring
+
 Database
 --------
 
@@ -350,6 +446,27 @@ Algorithm
 ---------
 
 ### BigData and Online Algorithm
+
+-   Partition Data
+    -   natural order
+        -   need lut
+    -   hash
+        -   balancing
+    -   logical order
+        -   locality but also need lut
+-   Repetition
+    -   HashSet with partitioned hash
+    -   BitSet
+    -   Bloom Filter
+    -   Trie
+-   Top-K
+    -   numeric
+        -   Heap
+    -   occurance
+        -   visit by hash then top-k-value
+        -   N Hash Table, Freq = min(value from all tables) \>= accurate
+            Freq
+        -   Trie
 
 Interview Record
 ----------------

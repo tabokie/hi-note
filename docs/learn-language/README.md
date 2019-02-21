@@ -6,6 +6,7 @@
         -   [Garbage Collection](#garbage-collection)
         -   [Parallel Programming](#parallel-programming-1)
     -   [Rust](#rust)
+        -   [Quiz](#quiz)
 
 Learn Language
 ==============
@@ -107,9 +108,9 @@ Rust
 
 ### Quiz
 
-* ```rust
-  let val = loop {
-    if x > 0 { break -1; }
-    0
-  }
-  ```
+-   ``` {.rust}
+    let val = loop {
+      if x > 0 { break -1; }
+      0
+    }
+    ```
