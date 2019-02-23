@@ -6,7 +6,8 @@
         -   [Memory](#memory)
         -   [Process](#process)
             -   [Process Management](#process-management)
-            -   [Process Communication](#process-communication)
+            -   [Process Communication and
+                Synchronization](#process-communication-and-synchronization)
         -   [Network IO](#network-io)
         -   [Filesystem](#filesystem)
     -   [Language](#language)
@@ -30,10 +31,12 @@
     -   [Database](#database)
     -   [Parallel Programming](#parallel-programming-1)
         -   [Paradigm](#paradigm)
+        -   [Lock and Model](#lock-and-model)
     -   [Systems](#systems)
     -   [Algorithm](#algorithm)
         -   [BigData and Online
             Algorithm](#bigdata-and-online-algorithm)
+        -   [Corner Case](#corner-case)
     -   [Interview Record](#interview-record)
         -   [Bytedance](#bytedance)
             -   [19-01 Backend Develop Intern at
@@ -48,7 +51,9 @@
         -   [Pony.ai](#pony.ai)
     -   [Job Experience](#job-experience)
         -   [Company Overview](#company-overview)
+            -   [Alibaba](#alibaba-1)
             -   [Hulu](#hulu)
+            -   [Google](#google)
         -   [Transfer to USA](#transfer-to-usa)
 
 Learn to be Hired
@@ -198,6 +203,11 @@ Operating System & Linux
             -   copy from hardware to kernel
             -   send fid to socket buffer
         -   compact, cannot modify data
+-   virtual memory and page replacement
+    -   paging and segment
+    -   redis cache
+-   program link
+    -   dynamic versus static linkage
 
 ### Process
 
@@ -211,12 +221,15 @@ Operating System & Linux
         -   parent didn't call wait() to recycle the pid
         -   cause possible exaustion
         -   kill parent to solve
+        -   SIGCHILD to analyse cause
     -   stopped
     -   orphan
         -   parent already exit
         -   will be adopted by init process (pid=1)
+-   Process Scheduling
+-   Linux thread implementation
 
-#### Process Communication
+#### Process Communication and Synchronization
 
 -   IPC
     -   pipe
@@ -269,6 +282,10 @@ Operating System & Linux
 
 ### Filesystem
 
+-   basic
+    -   inode and block
+    -   file recovery
+    -   soft link and hard link
 -   Case Study
     -   Ext2
         -   block index stored in inode
@@ -346,6 +363,11 @@ Language
     -   no unsigned integer type
     -   String: support switch case semantics
     -   long: don't support switch case
+-   variable
+    -   local variable definition and initialization at the same time
+        -   explicit constraint, for local variable is only used after
+            initialized
+        -   unlike class member, need information at compilation time
 -   wrapping class
     -   Constant and Dynamic instance
         -   created through literal
@@ -415,6 +437,9 @@ Language
     -   misc
         -   reference super class
             -   Super.super.f()
+    -   no name hiding: except static/variable
+    -   dynamic binding: except private/static/final name
+        -   implementation
 -   initialization order
     -   super class static variable and block
     -   subclass static variable and block
@@ -425,8 +450,6 @@ Language
 -   access control
     -   (default) friendly: package
     -   protected: package and child
-    -   no name hiding: except static/variable
-    -   dynamic binding: except private/static/final name
 -   inner class
     -   in-class static inner class
         -   delayed initialization
@@ -440,7 +463,9 @@ Language
     -   `clone()`: shallow copy
     -   `equals()`: type
     -   `toString()`: name + @ + hash
+    -   method\_info
 -   Annotation
+    -   implementation
 
 #### Design Pattern
 
@@ -480,6 +505,8 @@ Language
 -   `fail-fast`: throw `ConcurrentModificationException` on concurrent
     access
     -   `modCount`
+    -   throw exception when delete using `for-each` even under
+        single-thread \#check-again\#
 -   `copy-on-write`: lock when applying modification
     -   `CopyOnWriteArrayList`
 -   Iterable and Iterator
@@ -487,7 +514,9 @@ Language
     -   `remove()`: delete last element returned by `next()`
 -   HashMap
     -   Collision
+    -   如何不影响读写下扩容
 -   ArrayList
+    -   `empty_array.add(1, new Object())`:
 -   ThreadSafe
 
 #### Parallel Programming
@@ -495,8 +524,20 @@ Language
 -   Thread
     -   `run()`, `start()`, `yield()`
 -   Lock
+    -   `synchronized`
+        -   Object: `monitorenter` & `monitorexit` instruction
+            -   `monitor` lock with counter (reentrant lock)
+        -   Method: `ACC_SYNCHRONIZED` identifies stored in
+            method\_info, then refer to instance `monitor` lock
+        -   optimization: refer to JVM Mark Word
     -   `Object`: `wait()`, `notify()`
+    -   `ReentrantLock`
+    -   偏向锁 轻量锁 重量锁 转化
 -   Handler and Message Queue
+-   util
+    -   Semaphore
+    -   CountDownLatch and Cyclic Barrier
+    -   Exchanger
 -   ThreadPool
     -   increasing strategy and denial strategy
 -   juc
@@ -504,6 +545,11 @@ Language
     -   `AtomicLong` versus `LongAdder`
         -   `Cell`
 -   `AbstractQueuedSynchronizer` (aqs)
+-   Mics
+    -   atomicity
+        -   `volatile`
+        -   `int a = 1` is atomic
+        -   `Integer a = new Integer(1)` is not
 
 #### Network
 
@@ -554,16 +600,61 @@ Language
 #### JVM
 
 -   Java -(`JDK`)-\> ByteCode -(`JVM`)-\> MachineCode
+-   对象头 (HotSpot JVM)
+    -   Mark Word: 2 machine word = 64-bit
+        -   3 word for array to store length
+        -   lock word
+            -   01 - 0 - age - hashCode
+            -   01 - 1 (biased lock) - age - epoch - threadId
+            -   00 (light lock) - pointer to lock (in-stack)
+            -   10 (heavy lock) - pointer to mutex (monitor)
+            -   11 for gc
+        -   monitor (heavy lock, mutex)
+            -   thread maintain list of free monitors
+            -   each object has an associated monitor
+            -   `ObjectMonitor`
+                -   EntryList: blocked thread
+                -   WaitSet: waiting thread
+                -   Owner: thread
+        -   biased lock: to decrease cost of single main thread
+            -   CAS on threadId
+            -   if failed, hang owner turn to lightweight lock
+        -   lightweight lock: to avoid OS context when single threaded
+            -   CAS on mark word (store old word to Desplaced Mark Word)
+            -   if failed, spin, if failureed again, turn to heavy lock
+                -   **adaptive spinning**
+                    -   incr on success
+            -   unlock CAS on mark word again
+        -   lock coarsening
+            -   not granularity
+            -   but effective scope
+        -   lock elimination
+            -   context scan
+            -   based on escape analysis
+    -   Class Pointer
 -   ClassLoader
+    -   `ClassNotFound` and `NoClassDefFound`
+        -   solution
+    -   双亲委派
+        -   为什么和如何破坏
+    -   模块化
+        -   Java9
+-   方法区和永久区
 -   g1 collector
 -   garbage collection
     -   `finalize()`
     -   `System.gc()`
     -   ways to be old
+    -   复制算法
 
 #### Industry
 
 -   Spring
+    -   循环依赖
+    -   Bean lifetime
+    -   AOP
+        -   implementation
+    -   IOC
 -   Project
     -   `chm`: microsoft, html
 
@@ -588,6 +679,11 @@ Parallel Programming
         -   or asynchronous callback which require additional state
             -   state in closure
     -   control flow is consistent with logical flow
+
+### Lock and Model
+
+-   DeadLock
+-   Procuder - Customer
 
 Systems
 -------
@@ -617,6 +713,11 @@ Algorithm
         -   N Hash Table, Freq = min(value from all tables) \>= accurate
             Freq
         -   Trie
+
+### Corner Case
+
+-   `uint32_t`
+-   decimal carry
 
 Interview Record
 ----------------
@@ -700,9 +801,32 @@ Job Experience
 
 ### Company Overview
 
+#### Alibaba
+
+-   tech
+    -   language: Java
+    -   department:
+        -   `antfin` / `alipay`
+        -   `aliyun`
+        -   `data platform`
+        -   `middleware`
+-   job
+    -   favor referee
+    -   emphasize basic knowledge
+    -   departments share same employ system
+        -   one referral at a time
+        -   includes cross interview
+    -   freezing time more than 0.5 year
+
 #### Hulu
 
 -   base at Beijing
+
+#### Google
+
+-   job
+    -   universal employment
+        -   = resume + algorithm
 
 ### Transfer to USA
 

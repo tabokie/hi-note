@@ -113,7 +113,18 @@ Rust
     -   name shadowing by `let`
     -   `const`: annotated, macro
     -   statement and expression
-
+* struct
+    * initialization
+        * `{..instance0}`
+        * `{member}`, `{member: value}`
+    * automatic referencing and dereferencing
+        * `p.func()`
+* ownership
+    * stackful and on-heap
+        * stackful data will be copied
+            * no difference between shallow copy and deep copy
+        * on-heap data moves
+            * `Copy` and `Drop` can't coexist
 ### Quiz
 
 -   ``` {.rust}
