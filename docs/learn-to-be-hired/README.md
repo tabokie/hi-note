@@ -1,4 +1,5 @@
 -   [Learn to be Hired](#learn-to-be-hired)
+    -   [Resources](#resources)
     -   [Network](#network)
         -   [Transport Layer](#transport-layer)
         -   [Application Layer](#application-layer)
@@ -15,7 +16,7 @@
             -   [Memory](#memory-1)
             -   [Polymorphism](#polymorphism)
             -   [Multi-Thread](#multi-thread)
-            -   [Meta Programming](#meta-programming)
+            -   [Template](#template)
             -   [Standard Library](#standard-library)
             -   [Misc](#misc)
         -   [Java](#java)
@@ -33,7 +34,11 @@
         -   [Paradigm](#paradigm)
         -   [Lock and Model](#lock-and-model)
     -   [Systems](#systems)
+        -   [Demand-Oriented](#demand-oriented)
     -   [Algorithm](#algorithm)
+        -   [Strategy](#strategy)
+        -   [Basic Algoruthm](#basic-algoruthm)
+        -   [Advanced Algorithm](#advanced-algorithm)
         -   [BigData and Online
             Algorithm](#bigdata-and-online-algorithm)
         -   [Corner Case](#corner-case)
@@ -51,13 +56,25 @@
         -   [Pony.ai](#pony.ai)
     -   [Job Experience](#job-experience)
         -   [Company Overview](#company-overview)
+            -   [PingCAP](#pingcap)
             -   [Alibaba](#alibaba-1)
             -   [Hulu](#hulu)
             -   [Google](#google)
+        -   [Build Open-Source
+            Experience](#build-open-source-experience)
         -   [Transfer to USA](#transfer-to-usa)
 
 Learn to be Hired
 =================
+
+Resources
+---------
+
+-   [hacking-the-software-engineer-interview](https://puncsky.com/hacking-the-software-engineer-interview/)
+-   Book: <Elements of Programming Interviews>
+-   [System Design
+    Primer](https://github.com/donnemartin/system-design-primer)
+-   [Leetcode VIP](http://206.81.6.248:12306/leetcode/algorithm)
 
 Network
 -------
@@ -72,7 +89,7 @@ Network
 -   HTTP/1.0 durable connection
     -   Connection Field = Keep-Alive / Close
     -   timeout = 5, max = 100
-    -   Implementation
+    -   9
         -   hold active processes until exaustion of pid
         -   IO multuplexing
         -   hold thread and buffer request until data is ready
@@ -131,6 +148,13 @@ Network
     -   principle: validity(real-time), reliability, fairness
     -   case study
         -   QUIC (Google's Quick UDP Internet Connections)
+            -   0RTT connection establishment
+            -   improved congestion control
+                -   configured at application layer
+                -   accurate RTT sample by ascending packet number +
+                    stream offset
+                    -   retransmission will use new and higher packet
+                        number to avoid ambiguity
         -   TFTP (trivial ftp)
             -   seq and ack and retransmission like TCP
             -   checksum sent ahead **Protocol**
@@ -307,7 +331,29 @@ Language
     -   misc
         -   definition without `public`, `static` modifiers
 -   right value reference
+    -   move constructor and copy constructor
+        -   `emplace_back` \> `push_back`
+    -   copy elision (RVO / NRVO) to optimize return by value
 -   smart pointer
+    -   `make_shared` \> `shared_ptr`
+        -   target and ref info will be stored in one contiguous block,
+            cut down alloc times
+            -   drawback: weak\_ref will in essence act like strong
+                reference, because weak ref info is stored with obj
+        -   atomicly manage memory ??
+            -   ``` {.cpp}
+                p_ = new Obj();
+                // exception
+                p = shared_ptr(_p);
+                ```
+
+        -   raw pointer reuse:
+            -   ``` {.cpp}
+                p = new Obj();
+                p1 = shared_ptr(_p);
+                p2 = shared_ptr(_p);
+                // repeat dtor if p1 p2 are released
+                ```
 
 #### Polymorphism
 
@@ -320,9 +366,18 @@ Language
 
 #### Multi-Thread
 
-#### Meta Programming
+-   `async`
+-   `thread`
 
+#### Template
+
+-   generic programming
+-   meta programming
+-   `type_traits`
 -   SFINAE (substitution failure is not an error)
+-   new standard
+    -   varidic template
+    -   auto type deduction
 
 #### Standard Library
 
@@ -466,6 +521,7 @@ Language
     -   method\_info
 -   Annotation
     -   implementation
+-   Java 9 - Modular
 
 #### Design Pattern
 
@@ -633,12 +689,37 @@ Language
             -   based on escape analysis
     -   Class Pointer
 -   ClassLoader
-    -   `ClassNotFound` and `NoClassDefFound`
-        -   solution
-    -   双亲委派
-        -   为什么和如何破坏
-    -   模块化
-        -   Java9
+    -   Load Timing
+        -   new instance or use static member
+        -   reflection
+        -   initialize child class
+        -   marked as booting class (java Boot)
+        -   JDK1.7 dynamic language support
+    -   Loader
+        -   Bootstrap ClassLoader: `rt.jar` implemented by C++
+        -   Extension ClassLoader: extension `.jar` package
+        -   App ClassLoader: classpath
+        -   parents delegation
+            -   pass request to parent ClassLoader
+            -   benifit: uniqueness, avoid error for type information
+            -   destory parent delegation: bypass parent loader and load
+                customized class with AppClassLoader
+                -   how?
+        -   exception
+            -   `ClassNotFoundException`: load by string, but not found
+            -   `NoClassDefFound`: explicitly use class but miss
+                `.class` file
+    -   Loading Procedure
+        -   Load: find `.class` and alloc a `Class` object
+        -   Link: validate, prepare (static member), resolution (symbol
+            reference)
+        -   Initialize: ctor
+    -   JIT runtime editor: optimize hotspot bytecode
+        -   HotSpot detection
+            -   sample: thread stack top item
+            -   counter for method
+                -   Invocation Counter
+                -   BackEdge Counter: loop back
 -   方法区和永久区
 -   g1 collector
 -   garbage collection
@@ -646,6 +727,8 @@ Language
     -   `System.gc()`
     -   ways to be old
     -   复制算法
+-   memory
+    ------
 
 #### Industry
 
@@ -682,14 +765,184 @@ Parallel Programming
 
 ### Lock and Model
 
+-   Lock
+    -   SpinLock: `while(!lock) {}`
+        -   TAS (test and set): one CAS
+        -   TTAS (spin on read): read + CAS
+        -   TTAS with backoff: backoff when CAS failed
+        -   drawback
+            -   spinning
+                -   noop instruction
+            -   shared cacheline
+                -   avoid collision in time: backoff and cas elimination
+                -   avoid collision in space: queue
+                    -   spin on next waiter's flag
+                    -   spin on flag w.r.t. sequence number
+            -   clock interrupt (timeslice blocking) when locked
+                -   turn off interrupt
+    -   Mutex: add thread suspension
+        -   drawback:
+            -   need OS context
+                -   CAS first
+    -   ReadWriteLock
+        -   rlock: lock(r); r++; if (r == 1) lock(w); // only one locks
+            wlock: lock(w);
+    -   Condition Variable: signal to waiters
 -   DeadLock
 -   Procuder - Customer
 
 Systems
 -------
 
+### Demand-Oriented
+
+-   High Concurrency
+    -   asynchronous queue
+
 Algorithm
 ---------
+
+### Strategy
+
+-   practice
+    -   with speed and amount
+    -   whiteboard: plan-ahead, testcase design
+    -   verbal: abstracting idea
+    -   mock interview
+
+### Basic Algoruthm
+
+-   Permutation and Subset O(2\^n)
+    -   recursive DFS
+
+    ``` {.python}
+    def subset1(self,subset,res,index,nums): 
+        if index == len(nums):
+            res.append(subset[:]) 
+            return 
+        subset.append(nums[index]) 
+        self.subset1(subset,res,index+1,nums) # 这种情况就是用第idx个数字
+        subset.pop(-1) 
+        self.subset1(subset,res,index+1,nums) # 这种情况就是不用idx
+    ```
+
+    -   divide and conquer
+
+    ``` {.python}
+    def subset2(self,subset,res,index,nums): 
+        res.append(subset[:]) 
+        for i in range(index,len(nums)): 
+            subset.append(nums) 
+            self.subset2(subset,res,i+1,nums) 
+            subset.pop(-1)
+    ```
+
+    -   iterative BFS
+
+    ``` {.python}
+    def subset3(self,res,nums): 
+        stack = [] 
+        stack.append([]) 
+        while stack: 
+            temp = stack.pop()[:]
+            res.append(temp) 
+            for i in range(len(nums)): 
+                if not temp or temp[-1] < nums: 
+                    #相当于没有用temp[-1]到 第i-1个数字
+                    subset = temp[:] 
+                    temp.append(nums) 
+                    stack.append(subset) 
+        return res 
+    ```
+
+-   QuickSort and Partition O(nlogn)
+    -   K-th Element in an Array
+-   MergeSort and Merge
+    -   K-merge
+    -   interval-merge
+-   Dual Pointer
+    -   merge-sort parallel pointer
+    -   quick-sort opposite pointer
+    -   scan-line 扫描线 p-p
+    -   单调栈 p-p
+-   Divide-and-Conquer and Traverse
+    -   divide-and-conquer: f = \|\| f(a) + f(b)
+    -   traverse: g(res), f(res), res
+-   Binary Search
+-   BFS
+    -   basic form
+
+    ``` {.python}
+    def BFS(self, graph, start)
+        ans = []
+        q = []
+        visited = {}
+
+        q.append(start)
+        visited[start] = True  
+
+        while q:
+            temp = q.pop(0)
+            ans.append(temp)
+            for n in temp.neighbors:
+                if n not in visited:
+                    q.append(n)
+                    visited[n] = True
+        return ans
+    ```
+
+    -   level-by-level
+
+    ``` {.python}
+    def BFS(self, graph, start)
+        ans = []
+        q = []
+        visited = {}
+
+        q.append(start)
+        visited[start] = True  
+
+        while q:
+            size = len(q)
+            for i in range(size):
+                temp = q.pop(0)
+                ans.append(temp)
+                for n in temp.neighbors:
+                    if n not in visited:
+                        q.append(n)
+                        visited[n] = True
+        return ans
+    ```
+
+    -   topological sort
+
+    ``` {.python}
+    def topSortBFS(self, graph):
+        indegree = {}
+        ans = []
+        for g in graph:
+            for n in g.neighbors:
+                if n not in indegree:
+                    indegree[n] = 1
+                else:
+                    indegree[n] += 1
+
+        q = []
+        for g in graph:
+            if g not in indegree:
+                q.append(g)
+
+        while q:
+            temp = q.pop(0)
+            ans.append(temp)
+            for n in temp.neighbors:
+                indegree[n] -= 1
+                if indegree[n] == 0:
+                    q.append(n)
+        return ans
+    ```
+
+### Advanced Algorithm
 
 ### BigData and Online Algorithm
 
@@ -801,6 +1054,51 @@ Job Experience
 
 ### Company Overview
 
+#### PingCAP
+
+-   job
+    -   hr-interview =\> assignment =\> tech-interview
+    -   history assignment
+        -   2018: 利用 kubectl plugin 机制实现一个插件，用于 debug
+            任意一个 pod 里的容器，达到 kubectl exec 的使用体验.
+            [github](https://github.com/aylei/kubectl-debug)
+        -   2018-09/10: maintain system: design a concurrent task queue
+            to put modification plan with safe freezing on exception.
+            [github-1](https://github.com/xiaozzz/PingCAP),
+            [github-2](https://github.com/deqianzou/PingCAP-TaskQueue)
+        -   2018-10: design and implement a data structure for Least
+            Recently Used (LRU) cache. It should support the following
+            operations: get and put. O(1).
+            [github](https://github.com/panxiande/PingCap)
+        -   2018-10: design a realtime service that lookup city w.r.t.
+            ip input. data 500 millions.
+        -   2018-10: two servers with public ip at 33 locations which
+            can download `pingcap.tar.gz(2GB)`. design a system for
+            national download which is fast and fault-tolerant.
+            [github](https://github.com/tianjiqx/PingCAPInterviewProject)
+        -   2018-10: Design an index structure to minimize the cost of
+            reading each key-value randomly and concurrently.
+            Preprocessing allowed.
+            [github](https://github.com/lightghli/ryougidb)
+        -   2018-10/2019-02: use 1 GB memory to account top-100 of 100
+            GB url file. [github-1](https://github.com/YiZhao0319/topK),
+            [github-2](https://github.com/ltg001/URL_counter_mapreduce)
+        -   2018-11: two csv tables t1(a) and t2(b) with million lines.
+            design an algorithm for
+            `select count(*) from t1 join t2 on t1.a = t2.a and t1.b > t2.b`,
+            analyse options and test sensitivity to number of distinct
+            values.
+            [github](https://github.com/FishinLab/PingCAP_Interview)
+        -   2018-12: 实现 TiDB 在 K8s 之上的 yaml 部署方案 a.使用 Local
+            PV, b.要求 PD/TiKV/TiDB 使用配置文件,
+            c.集群部署时能够自动设置 TiDB 密码, d.集群需要有
+            Prometheus/Grafana 监控.
+            [github](https://github.com/GSIL-Monitor/pingcap-mianshi)
+        -   2019-02: two unordered table file(1 TB): (item\_id: u64,
+            item\_price: u64) and (user\_id: u64. item\_id: u64).
+            calculate user cost.
+            [github](https://github.com/DQinYuan/pingcap_interview)
+
 #### Alibaba
 
 -   tech
@@ -827,6 +1125,27 @@ Job Experience
 -   job
     -   universal employment
         -   = resume + algorithm
+        -   [questions](./google-algorithm.md)
+
+### Build Open-Source Experience
+
+-   Participate in Open-Source Project
+    -   bug report
+        -   format
+        -   compatibility bug
+    -   bug fix
+    -   feature committer
+-   Google Summer of Code
+    -   organization selects
+        -   3D Geometry & Rendering
+            -   new gui
+            -   surface reconstruction
+            -   function extension
+        -   Rust
+        -   Go
+    -   requirement
+        -   participation
+        -   proposal
 
 ### Transfer to USA
 

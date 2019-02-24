@@ -7,7 +7,6 @@
         -   [Parallel Programming](#parallel-programming-1)
     -   [Rust](#rust)
         -   [Basic](#basic)
-        -   [Quiz](#quiz)
 
 Learn Language
 ==============
@@ -113,20 +112,20 @@ Rust
     -   name shadowing by `let`
     -   `const`: annotated, macro
     -   statement and expression
-* struct
-    * initialization
-        * `{..instance0}`
-        * `{member}`, `{member: value}`
-    * automatic referencing and dereferencing
-        * `p.func()`
-* ownership
-    * stackful and on-heap
-        * stackful data will be copied
-            * no difference between shallow copy and deep copy
-        * on-heap data moves
-            * `Copy` and `Drop` can't coexist
-### Quiz
-
+-   struct
+    -   initialization
+        -   `{..instance0}`
+        -   `{member}`, `{member: value}`
+    -   automatic referencing and dereferencing
+        -   `p.func()`
+    -   unboxing
+        -   exausting `match` and specific `if let`
+-   ownership
+    -   stackful and on-heap
+        -   stackful data will be copied
+            -   no difference between shallow copy and deep copy
+        -   on-heap data moves
+            -   `Copy` and `Drop` can't coexist \#\#\# Quiz
 -   ``` {.rust}
     let val = loop {
       if x > 0 { break -1; }
