@@ -1085,6 +1085,7 @@ Job Experience
             [github-2](https://github.com/ltg001/URL_counter_mapreduce)
         -   2018-11: two csv tables t1(a) and t2(b) with million lines.
             design an algorithm for
+            [github](https://github.com/fang19911030/PingCap)
             `select count(*) from t1 join t2 on t1.a = t2.a and t1.b > t2.b`,
             analyse options and test sensitivity to number of distinct
             values.
