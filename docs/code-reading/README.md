@@ -1,5 +1,7 @@
 -   [Code Reading](#code-reading)
     -   [Reading List](#reading-list)
+    -   [Hack](#hack)
+    -   [Structure](#structure)
 
 Code Reading
 ============
@@ -138,3 +140,19 @@ Reading List
     -   Interview
         -   [Interview-Notebook](https://github.com/jianghui-galaxy/Interview-Notebook)
         -   [CS-Notes](https://github.com/CyC2018/CS-Notes)
+        -   [Java-Guide](https://github.com/Snailclimb/JavaGuide)
+        -   [coding-interview-university](https://github.com/jwasham/coding-interview-university)
+        -   [tech-interview-handbook](https://github.com/yangshun/tech-interview-handbook)
+        -   [interviews](https://github.com/kdn251/interviews)
+        -   [Interview-Questions](https://github.com/rishabh115/Interview-Questions)
+
+Hack
+----
+
+-   Generic
+    -   `infinity >= 0x3f3f3f3f`
+        -   inf + inf == inf
+        -   inf = memset(0x3f)
+
+Structure
+---------

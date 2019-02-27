@@ -13,6 +13,7 @@
         -   [Filesystem](#filesystem)
     -   [Language](#language)
         -   [C++](#c)
+            -   [Underneath](#underneath)
             -   [Memory](#memory-1)
             -   [Polymorphism](#polymorphism)
             -   [Multi-Thread](#multi-thread)
@@ -31,17 +32,22 @@
             -   [Industry](#industry)
     -   [Database](#database)
     -   [Parallel Programming](#parallel-programming-1)
+        -   [Overview](#overview)
         -   [Paradigm](#paradigm)
         -   [Lock and Model](#lock-and-model)
     -   [Systems](#systems)
         -   [Demand-Oriented](#demand-oriented)
+    -   [Graphics](#graphics)
     -   [Algorithm](#algorithm)
         -   [Strategy](#strategy)
-        -   [Basic Algoruthm](#basic-algoruthm)
+        -   [Basic Data Structure](#basic-data-structure)
+        -   [Basic Algorithm](#basic-algorithm)
         -   [Advanced Algorithm](#advanced-algorithm)
+        -   [Probablistic and Randomness](#probablistic-and-randomness)
         -   [BigData and Online
             Algorithm](#bigdata-and-online-algorithm)
         -   [Corner Case](#corner-case)
+        -   [Bugs](#bugs)
     -   [Interview Record](#interview-record)
         -   [Bytedance](#bytedance)
             -   [19-01 Backend Develop Intern at
@@ -300,6 +306,9 @@ Operating System & Linux
             -   need consume at first sight or lose it
             -   only support non-blocking socket, to avoid blocking at
                 file end (non-blocking will return EAGAIN)
+        -   implementation
+            -   rbtree: no duplicate
+            -   ready list: insert by callback handle
 -   signal-driven
 -   async
     -   aio\_read to let kernel signal user
@@ -321,8 +330,22 @@ Language
 
 ### C++
 
+#### Underneath
+
+-   Compilation
+    -   elf file
+        -   header
+        -   vtable
+    -   gdb debugger
+
 #### Memory
 
+-   layout
+    -   stack
+    -   heap
+    -   free store: abstract concept
+    -   global / static store
+    -   constant store
 -   static object
     -   initialization order
         -   global::ctor -\> main() -\> f() -\> f::static::ctor -\>
@@ -330,10 +353,16 @@ Language
     -   name-mangling
     -   misc
         -   definition without `public`, `static` modifiers
--   right value reference
+-   move semantics
     -   move constructor and copy constructor
-        -   `emplace_back` \> `push_back`
+        -   `template emplace_back(T&&)` \> `push_back(item_type&&)`
+    -   right reference
+    -   forward reference (universal reference): `T&&`
+        -   reference collapsing
     -   copy elision (RVO / NRVO) to optimize return by value
+-   allocation
+    -   `malloc`: free store
+    -   `new`: heap
 -   smart pointer
     -   `make_shared` \> `shared_ptr`
         -   target and ref info will be stored in one contiguous block,
@@ -354,11 +383,24 @@ Language
                 p2 = shared_ptr(_p);
                 // repeat dtor if p1 p2 are released
                 ```
+    -   thread-safety
+        -   ref-count field: atomic
+        -   ref-count + pointer: non-thread-safe
 
 #### Polymorphism
 
--   Class layout
--   function overload
+-   virtual function: dynamic poly
+    -   Class Layout
+        -   primary base for multiple inheritance
+        -   offset-to-top: `B b = new DerivedFromAB()`, b will point to
+            non-primary base, need offset to rewind to actual object
+        -   RTTI
+        -   (primary\_v\_ptr-\>) Derived::f()
+        -   (non-primary\_v\_ptr-\>) Thunk f()
+    -   call parent function: explicitly, compiler generated address
+    -   virtual inheritance
+    -   `override` keyword: avoid wrong implementation
+-   function / operator overload: static poly
     -   argument-dependent lookup: lookup range includes all related
         type's namespace
         -   super class and member class
@@ -373,13 +415,39 @@ Language
 
 -   generic programming
 -   meta programming
--   `type_traits`
+-   type system
+    -   `decltype`
+        -   `decltype(a_int) b = 0;`
+        -   `decltype(0) b = 0;`
+    -   `type_traits`
+    -   `constexpr`
+        -   function
+-   two-phase name lookup
 -   SFINAE (substitution failure is not an error)
 -   new standard
     -   varidic template
     -   auto type deduction
+-   compilation
+    -   template instantiation
+    -   Export Template (deprecated): save source file for late
+        compilation
+-   variadic template `...`
 
 #### Standard Library
+
+-   container
+    -   `list`: double-linked list
+    -   `vector`: contiguous array
+        -   `push_back`
+            -   time complexity: O(c)
+                -   $log_m(n)$ times reallocate
+                -   each reallocate will execute $m^i$ times moving
+    -   `map`: rb-tree
+    -   `unordered_map`: hash table
+    -   `set`: rb-tree
+    -   `unordered_set`: hash table
+    -   iterator
+        -   invalidation
 
 #### Misc
 
@@ -486,6 +554,7 @@ Language
     -   Interface
         -   default method: `default void f()`
         -   `extends` have priority over `implements`
+        -   member variable is implicit `static final`
 -   Inheritance
     -   Override
     -   Overload
@@ -495,13 +564,7 @@ Language
     -   no name hiding: except static/variable
     -   dynamic binding: except private/static/final name
         -   implementation
--   initialization order
-    -   super class static variable and block
-    -   subclass static variable and block
-    -   super class member and block
-    -   super class ctor
-    -   subclass class member and block
-    -   subclass ctor
+-   initialization: see JVM
 -   access control
     -   (default) friendly: package
     -   protected: package and child
@@ -695,6 +758,10 @@ Language
         -   initialize child class
         -   marked as booting class (java Boot)
         -   JDK1.7 dynamic language support
+        -   passive reference
+            -   `SubClass.super_class_value`
+            -   `new Class[10]`
+            -   `Class.const_value`: not final, from constant pool
     -   Loader
         -   Bootstrap ClassLoader: `rt.jar` implemented by C++
         -   Extension ClassLoader: extension `.jar` package
@@ -711,8 +778,8 @@ Language
                 `.class` file
     -   Loading Procedure
         -   Load: find `.class` and alloc a `Class` object
-        -   Link: validate, prepare (static member), resolution (symbol
-            reference)
+        -   Link: varificate, prepare (static member), resolution
+            (symbol reference)
         -   Initialize: ctor
     -   JIT runtime editor: optimize hotspot bytecode
         -   HotSpot detection
@@ -720,15 +787,125 @@ Language
             -   counter for method
                 -   Invocation Counter
                 -   BackEdge Counter: loop back
--   方法区和永久区
--   g1 collector
+    -   initialization
+        -   `clinit`: combination of static operation
+            -   forward assignment, no forward access
+            -   parent `clinit` is garanteed to first execute
+            -   interface has static final but no static block
+                -   parent interface `clinit` will be called only
+                    variable is referenced
+                -   implementation will not call interface's `clinit`:
+                    why??
+            -   synchronized
+        -   order
+            -   super class static variable and block
+            -   subclass static variable and block
+            -   super class member and block
+            -   super class ctor
+            -   subclass class member and block
+            -   subclass ctor
 -   garbage collection
+    -   Heap
+        -   Young Generation
+            -   Eden
+            -   From Survivor
+            -   To Survivor
+        -   Old
+        -   Permanent
+    -   Method Area
+        -   Class
+            -   Instance are all collected
+            -   ClassLoader is collected
+            -   Class object isn't referenced
+    -   algorithm
+        -   mark and collect
+        -   copy: copy living object to shadow half
+            -   naive: 0.5 utilization
+            -   hotspot: (Eden + From) -\> To
+                -   proportion of Eden / Survivor = 8
+                -   if survivor \> 0.1, borrow Old Generation area
+        -   mark and trim (整理): compact
+        -   generation collect
+            -   Young and Old
+            -   Old uses mark algorithm
+    -   Collector
+
+        ![collector](./java-gc-collector.jpg)
+
+        -   Serial: used under single-threaded, hault and collect, no
+            context switch
+        -   ParNew: multi-threaded, hault and collect
+        -   Parallel Scavenge: throughput first (user time percent, not
+            respond time)
+        -   Serial Old: like serial
+        -   Parallel Old: parallel scavenge for old generation
+        -   CMS(Concurrent Mark Sweep): mark and collect
+            -   Procedure
+                -   init: mark GC Roots' direct relatives, block
+                -   concurrent: GC Roots Tracing, non-block
+                -   re-mark: update to latest, block
+                -   concurrent collect: non-block
+            -   Drawback
+                -   CPU sensitive
+                -   floater can't be cleaned, need extra space when
+                    collecting
+                -   fragment
+        -   G1(garbage first): region mark-collect, in-region copy,
+            predictable pause
+            -   generation are logical concept, memory is divided into
+                regions.
+            -   prediction is done by partial gc. supported by region
+                tracing and priority queue
+            -   region's remembered set (referenced region) maintained
+                when write reference
+                -   write barrier to pause write operation
+                -   make it feasible to scan only partial region
+            -   Procedure
+                -   init
+                -   concurrent
+                -   final mark: increments stored in remembered set log
+                -   filted collect: collect by priority
+
+    -   Allocate and Collect
+        -   Allocate
+            -   enter old generation: big object
+                -   long String
+                -   array
+            -   switch to old generation: old object
+                -   age = times to switch to survive minor GC
+                -   = threshold will enter old generation
+
+                -   threshold = min (default, majority age)
+        -   Collect
+            -   minor GC
+                -   safe minor GC happens when old contiguous space \>=
+                    young (all young upgrade)
+                -   danguous minor GC check history upgrades (disabled
+                    by `HandlePromotionFailure`)
+            -   full GC
+                -   triggers
+                    -   `System.gc()`: advice
+                    -   old heap is full
+                    -   PromotionFailure when minor GC
+                    -   permanent heap is full
+                        -   before JDK 1.7, Method area stored in
+                            Permanent Heap
+                        -   CMS GC will not GC in this case
+                    -   with CMS, old heap is not enough for floater
+                        when collecting, `ConcurrentModeFailure`
     -   `finalize()`
-    -   `System.gc()`
-    -   ways to be old
-    -   复制算法
+
 -   memory
-    ------
+    -   Thread
+        -   PC
+        -   Stack
+        -   Native Method Stack: works for native methods
+    -   Global
+        -   Heap: see gc
+        -   Method Area: Class and static
+            -   Runtime Constant Pool
+    -   Direct Memory
+        -   `DirectByteBuffer`
 
 #### Industry
 
@@ -746,6 +923,26 @@ Database
 
 Parallel Programming
 --------------------
+
+### Overview
+
+-   Model
+    -   race condition
+        -   concurrent access
+        -   at least one modifier
+    -   protect shared varaiable so that no race condition happens
+        -   lock
+        -   atomic semantic
+        -   internal synchronization: infras for synchronization
+-   Design
+    -   Algorithm
+        -   GPU: CUDA
+        -   CPU
+    -   Architecture
+    -   System
+        -   Storage
+        -   Computing
+        -   Management (schedule)
 
 ### Paradigm
 
@@ -799,6 +996,51 @@ Systems
 -   High Concurrency
     -   asynchronous queue
 
+Graphics
+--------
+
+-   Rasterization Pipeline
+    -   forward shading: vertex + fragment shading
+        -   forward+ shading: vertex -\> tiled Z-buffer -\> light
+            clipping + fragment shading
+    -   deferred shading: vertex -\> G-buffer (depth, normal, albedo)
+        -\> shading
+        -   tile-based deferred shading: vertex -\> tiled G-buffer -\>
+            light clipping -\> shading
+        -   deferred lighting: no albedo in G-buffer, add additional
+            shading pass
+            -   allow complex material
+        -   features
+            -   memory-inefficient
+            -   not support alpha
+            -   not support hardware AA
+    -   inferred lighting
+-   Sample and Anti-Aliasing
+    -   SSAA: target scaling
+    -   MSAA: multiple sample at fragment shading (hardware AA)
+        -   color = sample-hit-rate \* vertex color
+    -   FXAA: post-process, vision tech
+    -   MFAA: inter-frame
+    -   TAA: temporal super sampling
+        -   projection matrix jittering
+    -   DLSS: RNN
+-   Physically-based Render
+-   Coordination
+-   Geometry
+    -   Triangle
+    -   Collision Detection
+        -   8-ary tree
+-   Probablistic
+    -   Uniform Sample
+        -   rejection sampling
+            -   uniform sample in domain area
+            -   repeat until accepted
+        -   inverse sampling
+            -   intersect Cumulative Distribution Function
+            -   inverse function
+        -   e.g. Circle
+    -   Shuffle: see algorithm
+
 Algorithm
 ---------
 
@@ -810,7 +1052,12 @@ Algorithm
     -   verbal: abstracting idea
     -   mock interview
 
-### Basic Algoruthm
+### Basic Data Structure
+
+-   Hash Table
+    -   [collision](http://www.ruanyifeng.com/blog/2018/09/hash-collision-and-birthday-attack.html)
+
+### Basic Algorithm
 
 -   Permutation and Subset O(2\^n)
     -   recursive DFS
@@ -865,6 +1112,7 @@ Algorithm
     -   quick-sort opposite pointer
     -   scan-line 扫描线 p-p
     -   单调栈 p-p
+    -   linked-list intersection !!
 -   Divide-and-Conquer and Traverse
     -   divide-and-conquer: f = \|\| f(a) + f(b)
     -   traverse: g(res), f(res), res
@@ -944,6 +1192,26 @@ Algorithm
 
 ### Advanced Algorithm
 
+### Probablistic and Randomness
+
+-   Shuffle
+    -   random pick from remainder
+    -   (online) switch new-comer with insider
+    -   (online pick-k) keep first K, for i \> K:
+        `x=random(1,i); if x < K: arr[x] = new`
+-   Sample
+    -   uniform: xn+1 = (a \* xn + b) % m
+
+    <!-- -->
+
+        linear congruential method: 线性同余法
+        complete cycle (output 0..m before repeat):
+        1. b,m inter-prime
+        2. m prime factors' product % (a-1) == 0
+        3. if M%4==0 then (a-1)%4==0
+        4. a,b,x0 < m
+        5. a,b > 0
+
 ### BigData and Online Algorithm
 
 -   Partition Data
@@ -971,6 +1239,12 @@ Algorithm
 
 -   `uint32_t`
 -   decimal carry
+
+### Bugs
+
+-   grammar
+    -   `>>`
+    -   `a + (b) ? x : y`
 
 Interview Record
 ----------------

@@ -120,12 +120,34 @@ Rust
         -   `p.func()`
     -   unboxing
         -   exausting `match` and specific `if let`
+    -   deref coercion
+        -   `add(String, &str){}(a_string, &a_string)`
+-   generic type and polymorphism
+    -   orphan rule (coherence)
+    -   blanket implementation
+        -   partial trait implementation
 -   ownership
     -   stackful and on-heap
         -   stackful data will be copied
             -   no difference between shallow copy and deep copy
         -   on-heap data moves
             -   `Copy` and `Drop` can't coexist \#\#\# Quiz
+    -   borrow checker and generic lifetime
+        -   function
+            -   `&'a`: input variable lifetime outlives deduced lifetime
+            -   output variable has deduced lifetime
+            -   generic lifetime must be related to input variable
+        -   struct
+        -   lifetime elision rules
+            -   each reference parameter gets its own lifetime parameter
+            -   if there is only one parameter, it's assigned to output
+                lifetime
+            -   if there is a self reference (`&self`), it's assigned to
+                output lifetime
+        -   static lifetime
+            -   literal strings
+-   protocol and contract
+    -   index should be O(1): why String can't be indexed
 -   ``` {.rust}
     let val = loop {
       if x > 0 { break -1; }
