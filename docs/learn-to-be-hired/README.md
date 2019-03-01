@@ -12,6 +12,9 @@
         -   [Network IO](#network-io)
         -   [Filesystem](#filesystem)
     -   [Language](#language)
+        -   [Generic](#generic)
+            -   [Scripting Language](#scripting-language)
+            -   [Functional Language](#functional-language)
         -   [C++](#c)
             -   [Underneath](#underneath)
             -   [Memory](#memory-1)
@@ -26,16 +29,18 @@
             -   [Design Pattern](#design-pattern)
             -   [Standard Data Structure](#standard-data-structure)
             -   [Parallel Programming](#parallel-programming)
-            -   [Network](#network-1)
+            -   [IO](#io)
             -   [RTTI and Reflection](#rtti-and-reflection)
             -   [JVM](#jvm)
             -   [Industry](#industry)
     -   [Database](#database)
-    -   [Parallel Programming](#parallel-programming-1)
-        -   [Overview](#overview)
-        -   [Paradigm](#paradigm)
-        -   [Lock and Model](#lock-and-model)
-    -   [Systems](#systems)
+    -   [Programming Practice](#programming-practice)
+        -   [Debugging and Optimization](#debugging-and-optimization)
+        -   [Parallel Programming](#parallel-programming-1)
+            -   [Overview](#overview)
+            -   [Paradigm](#paradigm)
+            -   [Lock and Model](#lock-and-model)
+    -   [System Design](#system-design)
         -   [Demand-Oriented](#demand-oriented)
     -   [Graphics](#graphics)
     -   [Algorithm](#algorithm)
@@ -50,19 +55,20 @@
         -   [Bugs](#bugs)
     -   [Interview Record](#interview-record)
         -   [Bytedance](#bytedance)
-            -   [19-01 Backend Develop Intern at
+            -   [Backend Develop Intern at
                 EE](#backend-develop-intern-at-ee)
         -   [Alibaba](#alibaba)
-            -   [19-02 Antfin Big Data
-                Platform](#antfin-big-data-platform)
+            -   [Antfin Big Data Platform
+                Intern](#antfin-big-data-platform-intern)
         -   [Tencent](#tencent)
-            -   [19-02 Keen Security Lab](#keen-security-lab)
+            -   [Keen Security Lab](#keen-security-lab)
         -   [Netease](#netease)
-            -   [19-02 LeiHuo Game](#leihuo-game)
+            -   [LeiHuo Game Engine Intern](#leihuo-game-engine-intern)
         -   [Pony.ai](#pony.ai)
     -   [Job Experience](#job-experience)
         -   [Company Overview](#company-overview)
             -   [PingCAP](#pingcap)
+            -   [Netease](#netease-1)
             -   [Alibaba](#alibaba-1)
             -   [Hulu](#hulu)
             -   [Google](#google)
@@ -328,6 +334,18 @@ Operating System & Linux
 Language
 --------
 
+### Generic
+
+#### Scripting Language
+
+-   Definition
+    -   simplify repeated work
+    -   human-oriented
+-   example
+    -   `Unix shell`
+
+#### Functional Language
+
 ### C++
 
 #### Underneath
@@ -337,6 +355,13 @@ Language
         -   header
         -   vtable
     -   gdb debugger
+-   ABI: application binary interface
+    -   mangle: sourcecode id -\> ABI id
+    -   RTTI `typeid` operator will return ABI id (`.name()`)
+    -   demangle: cross-vendor C++ ABI
+        -   `abi::__cxa_demangle`
+-   Runtime
+    -   Stack
 
 #### Memory
 
@@ -361,8 +386,16 @@ Language
         -   reference collapsing
     -   copy elision (RVO / NRVO) to optimize return by value
 -   allocation
-    -   `malloc`: free store
-    -   `new`: heap
+    -   `malloc`: heap
+        -   `mmap` for large chunk
+        -   `brk`: break pointer in Linux
+        -   free list by C library
+    -   `new`: free store
+    -   `allocator`
+        -   `stl`
+            -   128 KB
+            -   first: `malloc`/`free`
+            -   second: built-in memory pool
 -   smart pointer
     -   `make_shared` \> `shared_ptr`
         -   target and ref info will be stored in one contiguous block,
@@ -410,6 +443,10 @@ Language
 
 -   `async`
 -   `thread`
+-   `volatile`
+    -   public: do not use register to save intermediate value
+    -   no reorder between volatile variable: instruction level
+    -   motivation: IO device mapped as memory
 
 #### Template
 
@@ -631,11 +668,46 @@ Language
 -   Iterable and Iterator
     -   `iterator()`
     -   `remove()`: delete last element returned by `next()`
--   HashMap
-    -   Collision
-    -   如何不影响读写下扩容
--   ArrayList
-    -   `empty_array.add(1, new Object())`:
+-   Set
+    -   TreeSet: rb-tree
+    -   HashSet
+        -   Collision
+        -   如何不影响读写下扩容
+    -   LinkedHashSet: ordered iterator
+-   List
+    -   ArrayList: thread-safe?
+        -   `empty_array.add(1, new Object())`:
+        -   factor = 1.5
+    -   Vector: thread-safe
+        -   factor = 2.0
+    -   LinkedList
+    -   Collection.synchronizedList(new ArrayList());
+    -   CopyOnWriteArrayList
+        -   single writer
+        -   modify pointer
+-   Queue
+    -   LinkedList
+    -   PriorityQueue: heap
+-   Map
+    -   TreeMap: rb-tree
+    -   HashMap
+        -   linked list to resolve collision
+    -   HashTable: thread-safe
+        -   can't insert `null` value
+    -   ConcurrentHashMap
+        -   Segment Lock: manage partial bucket
+        -   default concurrency (num of segment) = 16
+        -   `count()`:
+            -   each try execute two pass without lock
+            -   fourth try will lock all
+    -   LinkedHashMap
+        -   ordered by usage (LRU)
+            -   `accessOrder = false`: insert order
+            -   `true`: usage order
+    -   WeakHashMap
+        -   as cache
+            -   ConcurrentCache
+        -   value is WeakReference
 -   ThreadSafe
 
 #### Parallel Programming
@@ -662,23 +734,66 @@ Language
 -   juc
 -   Atomic
     -   `AtomicLong` versus `LongAdder`
-        -   `Cell`
+        -   `Cell`: distribute count value
 -   `AbstractQueuedSynchronizer` (aqs)
 -   Mics
+    -   `volatile`
+        -   cache visible
+        -   reorder
+            -   Release for write operation: all instruction before
+                can't be reorder after
+            -   Acquire for read operation: all instruction after can't
+                be reorder before
+            -   `hapen-before`
+                -   A =\> flag = true
+                -   if flag: B
+                -   A is guranteed before B
+        -   =\> atomic semantics
     -   atomicity
-        -   `volatile`
         -   `int a = 1` is atomic
-        -   `Integer a = new Integer(1)` is not
+        -   `volatile long a = 1` is atomic
+        -   `Integer a = b` is atomic
+            -   based on the fact that `Integer a; a=b;` is same as
+                `Integer a = b;`
+        -   `long a = 1` is not
+        -   `Integer a = new Integer(0)` is not
 
-#### Network
+#### IO
 
--   Socket
-    -   `Socket(String, int)`
-        -   `isConencted()`
-    -   `ServerSocket(int)`
-        -   `accept()`
-    -   `DatagrameSocket.send(DatagramPacket(byte[], int))`
--   BIO and NIO and AIO and Socket
+-   File
+-   Bytes
+    -   Decorator: `FilterInputStream` - DataInputStream -
+        BufferedInputStream - PushBackInputStream
+-   Chars
+-   Object
+    -   Serialize Stream
+        -   ObjectOutputStream.writeObject(obj)
+-   Network
+    -   Socket
+        -   `Socket(String, int)`
+            -   `isConencted()`
+        -   `ServerSocket(int)`
+            -   `accept()`
+    -   UDP Datagram
+        -   `DatagrameSocket.send(DatagramPacket(byte[], int))`
+-   NIO: block-oriented
+    -   Buffer
+        -   Channel
+        -   Buffer: interaction with channel must pass Buffer
+            -   capacity
+            -   position: len of read
+            -   limit: first invalid index
+    -   non-blocking IO (for Socket only)
+        -   Selector.open()
+        -   SocketChannel.open()
+        -   channel.register(selector)
+        -   selector.select(): block for all channels
+    -   mmap
+        -   MappedByteBuffer b = f.map(...)
+    -   IO Model
+        -   BIO: block
+        -   NIO: poll
+        -   AIO: callback
     -   netty
         -   channelhandler负责请求就绪时的io响应。
         -   bytebuf支持零拷贝，通过逻辑buff合并实际buff。
@@ -865,6 +980,12 @@ Language
                 -   concurrent
                 -   final mark: increments stored in remembered set log
                 -   filted collect: collect by priority
+        -   ZGC: faster than G1
+            -   region-based
+            -   compacting
+            -   NUMA-aware
+            -   colored pointer
+            -   load barrier
 
     -   Allocate and Collect
         -   Allocate
@@ -921,10 +1042,48 @@ Language
 Database
 --------
 
-Parallel Programming
+Programming Practice
 --------------------
 
-### Overview
+### Debugging and Optimization
+
+-   Memory
+    -   Failure (`malloc` failed)
+        -   OOM
+            -   Large Request
+                -   Lazy request
+                -   File: mmap
+            -   Memory Leak
+                -   customized: override `new` operator
+                -   compilation: cppcheck
+                -   runtime: valgrind (linux), `DumpMemoryLeak` in
+                    Windows
+            -   OOM Killer: kill by priority
+            -   GC raised (in Java): 98% timeslice for GC but only
+                retrieve 2% memory
+        -   Memory Trespassing
+-   Cache
+    -   shared cacheline, false sharing
+    -   prefetch
+    -   register optimization
+        -   `++i` \> `i++`
+    -   memory alignment
+    -   leverage physical arrangement, locality
+-   Processor and Instruction
+    -   compiler supported optimization:
+        -   branch prediction: `likely`
+        -   `noexcept`
+        -   `inline`
+    -   branch elimination
+        -   switch-case: lut
+        -   bit operation
+        -   loop unfold
+    -   vector instruction
+-   GPU
+
+### Parallel Programming
+
+#### Overview
 
 -   Model
     -   race condition
@@ -944,7 +1103,7 @@ Parallel Programming
         -   Computing
         -   Management (schedule)
 
-### Paradigm
+#### Paradigm
 
 -   Process
     -   independent resource
@@ -960,7 +1119,7 @@ Parallel Programming
             -   state in closure
     -   control flow is consistent with logical flow
 
-### Lock and Model
+#### Lock and Model
 
 -   Lock
     -   SpinLock: `while(!lock) {}`
@@ -984,12 +1143,15 @@ Parallel Programming
     -   ReadWriteLock
         -   rlock: lock(r); r++; if (r == 1) lock(w); // only one locks
             wlock: lock(w);
-    -   Condition Variable: signal to waiters
+    -   Lock implementation
+        -   CAS
+-   Condition Variable: signal to waiters
 -   DeadLock
 -   Procuder - Customer
+-   Performance
 
-Systems
--------
+System Design
+-------------
 
 ### Demand-Oriented
 
@@ -1030,16 +1192,7 @@ Graphics
     -   Triangle
     -   Collision Detection
         -   8-ary tree
--   Probablistic
-    -   Uniform Sample
-        -   rejection sampling
-            -   uniform sample in domain area
-            -   repeat until accepted
-        -   inverse sampling
-            -   intersect Cumulative Distribution Function
-            -   inverse function
-        -   e.g. Circle
-    -   Shuffle: see algorithm
+-   Probablistic: see Algorithm
 
 Algorithm
 ---------
@@ -1200,17 +1353,38 @@ Algorithm
     -   (online pick-k) keep first K, for i \> K:
         `x=random(1,i); if x < K: arr[x] = new`
 -   Sample
-    -   uniform: xn+1 = (a \* xn + b) % m
+    -   starting point: integer uniform generator
+        -   xn+1 = (a \* xn + b) % m
 
-    <!-- -->
+        <!-- -->
 
-        linear congruential method: 线性同余法
-        complete cycle (output 0..m before repeat):
-        1. b,m inter-prime
-        2. m prime factors' product % (a-1) == 0
-        3. if M%4==0 then (a-1)%4==0
-        4. a,b,x0 < m
-        5. a,b > 0
+            linear congruential method: 线性同余法
+            complete cycle (output 0..m before repeat):
+            1. b,m inter-prime
+            2. m prime factors' product % (a-1) == 0
+            3. if M%4==0 then (a-1)%4==0
+            4. a,b,x0 < m
+            5. a,b > 0
+
+    -   Uniform Sample
+        -   rejection sampling
+            -   uniform sample in domain area
+            -   repeat until accepted
+        -   inverse sampling
+            -   intersect Cumulative Distribution Function
+            -   inverse function
+        -   e.g. Circle
+    -   scaling map
+        -   composing
+        -   module
+        -   rejection
+
+        <!-- -->
+
+            Rand7:
+            while x > 21:
+                x = 5 * (Rand5 - 1) + Rand5;
+            x % 7 + 1
 
 ### BigData and Online Algorithm
 
@@ -1245,13 +1419,17 @@ Algorithm
 -   grammar
     -   `>>`
     -   `a + (b) ? x : y`
+-   memory
+    -   iterating while modifying
 
 Interview Record
 ----------------
 
 ### Bytedance
 
-#### 19-01 Backend Develop Intern at EE
+#### Backend Develop Intern at EE
+
+(19-01)
 
 **first-interview**
 
@@ -1311,15 +1489,104 @@ focus on concrete knowledge, less theory talk.
 
 ### Alibaba
 
-#### 19-02 Antfin Big Data Platform
+#### Antfin Big Data Platform Intern
+
+(19-02)
+
+**pre-interview (19:00 on phone, 1 hour)**
+
+-   project
+    -   HTM, detail
+    -   ray tracer, procedure
+-   parallel programming
+    -   shared access
+        -   optimistic versus passive lock
+    -   message queue
+    -   scheduling
+        -   context saver
+-   distributed system
+    -   distributed lock
+        -   distributed cache
+-   basic
+    -   design pattern
+    -   OOM
+    -   network
+        -   session and cookies
+        -   errorno
+-   overview
+    -   restructure your code
+    -   favorite class
+    -   area you have touched
+    -   why laboratory
 
 ### Tencent
 
-#### 19-02 Keen Security Lab
+#### Keen Security Lab
+
+(19-02)
 
 ### Netease
 
-#### 19-02 LeiHuo Game
+#### LeiHuo Game Engine Intern
+
+(19-02)
+
+**first-interview (two in a row)**
+
+-   experience
+    -   `CUDA ray tracing`: how you optimize
+        -   answer: intersection cache
+    -   `coplus`: merits
+        -   answer: non-preemptive, no spinning
+        -   followup
+            -   context save
+                -   answer: OS + ...
+            -   do you know usage of coroutine in Game (private
+                question)
+            -   coroutine in Unity
+            -   function stack
+            -   performance bottleneck
+                -   answer: CAS, context switch
+-   parallel programming
+    -   allocator
+        -   answer: `coplus`
+        -   followup: optimize in following three condition
+            -   scoped variable
+            -   jabbed
+            -   global
+-   graphics
+    -   rendering
+        -   forward, deferred, tile-based
+
+**second-interview (cross)**
+
+-   experence
+    -   `ray tracing`
+        -   followup
+            -   bidirectional ray tracing
+            -   importance sampling
+-   graphics
+    -   deferred render
+        -   argue: for many-light condition, not for shading clipping
+-   parallel programming
+    -   linux wait-free queue
+    -   concurrent queue in `coplus`
+-   c++
+    -   new / malloc
+        -   new (addr) Obj()
+    -   iterator
+        -   container expand
+        -   delete when iterating
+            -   hint: `i = i.erase()`
+        -   delete when container shrink
+            -   answer: `i != v.end()`
+    -   virtual function
+        -   virtual dtor
+        -   vtable
+-   algorithm
+    -   rotate-k (from beauty-of-code): boom
+
+**result-and-summary**
 
 ### Pony.ai
 
@@ -1374,6 +1641,11 @@ Job Experience
             calculate user cost.
             [github](https://github.com/DQinYuan/pingcap_interview)
 
+#### Netease
+
+-   job
+    -   strongly focus on project
+
 #### Alibaba
 
 -   tech
@@ -1390,6 +1662,7 @@ Job Experience
         -   one referral at a time
         -   includes cross interview
     -   freezing time more than 0.5 year
+    -   only on-phone interview, set your phone rings!
 
 #### Hulu
 

@@ -1,12 +1,13 @@
 -   [Learn Language](#learn-language)
     -   [C++](#c)
         -   [Parallel Programming](#parallel-programming)
-    -   [Go](#go)
+    -   [Golang](#golang)
         -   [Basic Grammar](#basic-grammar)
         -   [Garbage Collection](#garbage-collection)
         -   [Parallel Programming](#parallel-programming-1)
     -   [Rust](#rust)
         -   [Basic](#basic)
+    -   [Pony](#pony)
 
 Learn Language
 ==============
@@ -73,8 +74,8 @@ C++
         -   a\_thread.get\_id()
         -   std::this\_thread::get\_id()
 
-Go
---
+Golang
+------
 
 ### Basic Grammar
 
@@ -121,7 +122,11 @@ Rust
     -   unboxing
         -   exausting `match` and specific `if let`
     -   deref coercion
-        -   `add(String, &str){}(a_string, &a_string)`
+        -   compiler will use `Deref` trait to attempt type fitting
+        -   e.g. `&String` -\> `&str`:
+            `add(String, &str){}(a_string, &a_string)`
+        -   e.g. `*Box<T> -> *(Box<T>.deref()) -> *(&T)`
+        -   `DerefMut` and `Def` (convert a &mut to &)
 -   generic type and polymorphism
     -   orphan rule (coherence)
     -   blanket implementation
@@ -147,10 +152,27 @@ Rust
         -   static lifetime
             -   literal strings
 -   protocol and contract
-    -   index should be O(1): why String can't be indexed
+    -   `Index`: index should be O(1): why String can't be indexed
+    -   `Clone`: Deep clone (not Rc)
+-   standard
+    -   zero-cost lazy iterator
+    -   smart pointer
+        -   basic usage: stores resource or act as generic handle or
+            enable recursive structure
+        -   `Box`: unique owner of heap-allocated resource
+            -   `Deref`: see deref coercion
+            -   `Drop`: customized resource release
+                -   call `std::mem::drop()` to explicit release, cause
+                    ownership invalidate too
+        -   `Rc`: reference counted immutable
+            -   `Rc::clone` and `rc.clone()`: prefer first w.r.t. deep
+                clone protocol
 -   ``` {.rust}
     let val = loop {
       if x > 0 { break -1; }
       0
     }
     ```
+
+Pony
+----
