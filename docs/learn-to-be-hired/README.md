@@ -39,21 +39,37 @@
         -   [Parallel Programming](#parallel-programming-1)
             -   [Overview](#overview)
             -   [Paradigm](#paradigm)
+            -   [Memory](#memory-2)
             -   [Lock and Model](#lock-and-model)
+            -   [Lock Free](#lock-free)
+            -   [Mics](#mics)
     -   [System Design](#system-design)
-        -   [Demand-Oriented](#demand-oriented)
+        -   [Design](#design)
+        -   [Communication](#communication)
+        -   [Storage](#storage)
     -   [Graphics](#graphics)
+        -   [Rendering](#rendering)
+        -   [Geometry](#geometry)
+        -   [High-Level Algorithm](#high-level-algorithm)
     -   [Algorithm](#algorithm)
         -   [Strategy](#strategy)
         -   [Basic Data Structure](#basic-data-structure)
         -   [Basic Algorithm](#basic-algorithm)
         -   [Advanced Algorithm](#advanced-algorithm)
+            -   [Dynamic Programming](#dynamic-programming)
         -   [Probablistic and Randomness](#probablistic-and-randomness)
         -   [BigData and Online
             Algorithm](#bigdata-and-online-algorithm)
         -   [Corner Case](#corner-case)
         -   [Bugs](#bugs)
+        -   [Optimization](#optimization)
     -   [Interview Record](#interview-record)
+        -   [Project Summary](#project-summary)
+            -   [Optix Ray Tracer](#optix-ray-tracer)
+            -   [Coplus Parallel Library](#coplus-parallel-library)
+            -   [sBase Database](#sbase-database)
+            -   [SpecTM transactional
+                memory](#spectm-transactional-memory)
         -   [Bytedance](#bytedance)
             -   [Backend Develop Intern at
                 EE](#backend-develop-intern-at-ee)
@@ -72,12 +88,17 @@
             -   [Alibaba](#alibaba-1)
             -   [Hulu](#hulu)
             -   [Google](#google)
+            -   [Microsoft](#microsoft)
         -   [Build Open-Source
             Experience](#build-open-source-experience)
         -   [Transfer to USA](#transfer-to-usa)
 
 Learn to be Hired
 =================
+
+**todos**
+
+-   [ ] Algorithm
 
 Resources
 ---------
@@ -351,9 +372,13 @@ Language
 #### Underneath
 
 -   Compilation
-    -   elf file
-        -   header
-        -   vtable
+    -   elf: binary under Linux
+        -   header: 64 byte
+            -   type: relocatable(`.o`) or executable
+            -   entry point address (for exe)
+        -   program header table (for exe)
+        -   section header table
+        -   vtable stored in rodata (read-only)
     -   gdb debugger
 -   ABI: application binary interface
     -   mangle: sourcecode id -\> ABI id
@@ -361,7 +386,10 @@ Language
     -   demangle: cross-vendor C++ ABI
         -   `abi::__cxa_demangle`
 -   Runtime
-    -   Stack
+    -   Function Stack
+        -   parameter
+            -   from right to left
+            -   easily fetch first of variable-length parameters
 
 #### Memory
 
@@ -391,11 +419,17 @@ Language
         -   `brk`: break pointer in Linux
         -   free list by C library
     -   `new`: free store
+    -   `new []`: store size of array, memory chunk \>= memory used
     -   `allocator`
         -   `stl`
             -   128 KB
             -   first: `malloc`/`free`
             -   second: built-in memory pool
+    -   `delete`
+        -   exception
+        -   `delete`: free memory chunk, call dtor if needed
+            -   `delete (new int[10])`: no leak
+        -   `delete []`: free (p-4) chunk
 -   smart pointer
     -   `make_shared` \> `shared_ptr`
         -   target and ref info will be stored in one contiguous block,
@@ -416,13 +450,31 @@ Language
                 p2 = shared_ptr(_p);
                 // repeat dtor if p1 p2 are released
                 ```
+    -   get smart pointer copy from class (extension of
+        raw-pointer-reuse-problem)
+        -   inherit from `std::enable_shared_from_this<Type>`
+        -   `shared_from_this() -> shared_ptr<..>`
+        -   to avoid `return std::shared_ptr(this);`
+        -   one example of `CRTP`
     -   thread-safety
         -   ref-count field: atomic
         -   ref-count + pointer: non-thread-safe
 
 #### Polymorphism
 
+-   class implementation
+    -   `func(this);`
 -   virtual function: dynamic poly
+    -   vtable: table of virutal function pointer
+        -   RTTI information
+        -   offset-to-top
+    -   single inheritance: call vptr + offset
+        -   increment virtual function: share same base component
+    -   mulitiple inheritance: call vptr\_x + offset
+        -   primary-base contains all function (base function + other
+            function)
+        -   non-primary contains adjustor thunk
+            -   `this -= offset; call f();`
     -   Class Layout
         -   primary base for multiple inheritance
         -   offset-to-top: `B b = new DerivedFromAB()`, b will point to
@@ -430,6 +482,7 @@ Language
         -   RTTI
         -   (primary\_v\_ptr-\>) Derived::f()
         -   (non-primary\_v\_ptr-\>) Thunk f()
+            -   Thunk is offset operator on `this` pointer
     -   call parent function: explicitly, compiler generated address
     -   virtual inheritance
     -   `override` keyword: avoid wrong implementation
@@ -438,6 +491,13 @@ Language
         type's namespace
         -   super class and member class
 -   RTTI
+-   typecast
+    -   `static_cast`: static resolve type conversion
+    -   `reinterpret_cast`: pointer, integer
+    -   `dynamic_cast`: pointer and reference
+        -   return NULL is incomplete pointer
+        -   throw `bad_cast` if incomplete reference
+    -   `const_cast`: const and volatile
 
 #### Multi-Thread
 
@@ -469,6 +529,12 @@ Language
     -   Export Template (deprecated): save source file for late
         compilation
 -   variadic template `...`
+-   CRTP (curiously recurring template pattern)
+    -   `class Derived: Base<Derived>` to implement static polymorphism
+        -   `Base<T>::func{ cast<T>::func(); }`
+        -   `generic_accept<T>(T t)`
+        -   reduce runtime penalty, with more template instance codes
+    -   widely used in Java too (`Comparable<T>`)
 
 #### Standard Library
 
@@ -1118,6 +1184,25 @@ Programming Practice
         -   or asynchronous callback which require additional state
             -   state in closure
     -   control flow is consistent with logical flow
+    -   Application
+        -   Syntex Parser: `while(true): readToken(); go Parse();`
+        -   State Machine
+    -   Implementation
+        -   Stackless Coroutine
+            -   Duff's device: `switch (co_data.flag)`
+            -   Tolerant to register and stack mutatiion (happens when
+                program recover)
+        -   Stackful Coroutine
+-   Parallel and Concurrent
+    -   parallel: multi-task at the same time
+    -   concurrent: in the same time interval, handle multi-task
+    -   e.g. GPU is parallel not concurrent, single-thread processor is
+        concurrent not parallel
+
+#### Memory
+
+-   CAS and ABA
+    -   version number
 
 #### Lock and Model
 
@@ -1134,6 +1219,8 @@ Programming Practice
                 -   avoid collision in space: queue
                     -   spin on next waiter's flag
                     -   spin on flag w.r.t. sequence number
+                    -   TicketSpinLock
+                    -   MCSSpingLock
             -   clock interrupt (timeslice blocking) when locked
                 -   turn off interrupt
     -   Mutex: add thread suspension
@@ -1143,35 +1230,112 @@ Programming Practice
     -   ReadWriteLock
         -   rlock: lock(r); r++; if (r == 1) lock(w); // only one locks
             wlock: lock(w);
+        -   SequenceLock: resolve write exhaustion
+            -   rlock: if (seq is even) read; if (seq != old seq) redo;
+                wlock: lock(mu); seq ++;
     -   Lock implementation
         -   CAS
+    -   appendix: [Lock C Implementations](./lock-c-impl.txt)
 -   Condition Variable: signal to waiters
 -   DeadLock
 -   Procuder - Customer
 -   Performance
 
+#### Lock Free
+
+#### Mics
+
+-   Concurrent Timer
+
 System Design
 -------------
 
-### Demand-Oriented
+### Design
 
+-   Theory
+    -   CAP
+    -   ACID and BASE
+-   Overview
+    -   tradeoff
+    -   showoff
+    -   procedure (from
+        `cracking-the-system-design-interview-designing-pinterest-or-instagram-as-an-example`)
+        -   requirement and specs
+            -   function
+            -   scaling
+        -   high-level design
+        -   individual components and interaction
+        -   estimation
+-   Components
+    -   Load Balancer
+    -   Reverse Proxy (contrast to forward-proxy on client,
+        reverse-proxy is server-end dispatcher)
+    -   Web Server
+        -   scaling (stateless)
+            -   rps (request-per-second) and bandwidth
+            -   vertical scaling (scaling-up)
+            -   horizontal scaling (scaling-out)
+        -   API
+            -   MVC and MVVC
+    -   App Service
+        -   Service Locater
+            -   `Zookeeper`: CP system
+            -   `Dynamo`
+        -   Micro Service
+    -   Database
+-   Scalability
+    -   methods
+        -   horizontal duplication
+        -   functional decomposition
+        -   horizontal partitioning
 -   High Concurrency
     -   asynchronous queue
 
+### Communication
+
+-   Protocol
+    -   UDP / TCP
+    -   HTTP
+        -   REST API
+    -   RPC
+
+### Storage
+
+-   RAID
+    -   mirror
+    -   stripe
+    -   parity
+    -   mirror + stripe
+        -   virtual disk management
+        -   1+0: stripe then mirror
+            -   virtual disk = stripes
+            -   single disk failure means one virtual stripe is
+                half-down
+        -   0+1: mirror then stripe
+            -   virtual disk = mirrors
+            -   single disk failure means one virtual mirror failure
+
 Graphics
 --------
+
+### Rendering
 
 -   Rasterization Pipeline
     -   forward shading: vertex + fragment shading
         -   forward+ shading: vertex -\> tiled Z-buffer -\> light
             clipping + fragment shading
+        -   complexity = Geometry \* Light
     -   deferred shading: vertex -\> G-buffer (depth, normal, albedo)
         -\> shading
+        -   complexity = Geometry + Light
+            -   clipping (could be done with Z-pre-pass in Forward
+                Rendering)
+            -   dimension mapping
         -   tile-based deferred shading: vertex -\> tiled G-buffer -\>
             light clipping -\> shading
-        -   deferred lighting: no albedo in G-buffer, add additional
-            shading pass
-            -   allow complex material
+        -   deferred lighting: use lightweight G-buffer to calculate
+            light buffer, then forward pass
+            -   allow complex material (in forward pass)
         -   features
             -   memory-inefficient
             -   not support alpha
@@ -1187,12 +1351,35 @@ Graphics
         -   projection matrix jittering
     -   DLSS: RNN
 -   Physically-based Render
+    -   Geometry Intersection
+        -   GPU optimization
+    -   Monte-Carlo
+        -   importance sampling
+            -   light sampling
+            -   BSDF sampling
+            -   multiple importance sampling
+        -   bidirectional ray tracing
 -   Coordination
--   Geometry
-    -   Triangle
-    -   Collision Detection
-        -   8-ary tree
+    -   two sets of U-V coordinates
+    -   tangent / normal space
+        -   tangent space rather than model space
+        -   texture reuse
+        -   compact normal texture (z \> 0)
+
+### Geometry
+
+-   Triangle
+-   Collision Detection
+    -   8-ary tree
+-   Player Clipping
+
+### High-Level Algorithm
+
 -   Probablistic: see Algorithm
+-   Generative ALgorithm
+    -   NPC AI
+    -   Maze Generate
+    -   Path-Finding
 
 Algorithm
 ---------
@@ -1207,6 +1394,12 @@ Algorithm
 
 ### Basic Data Structure
 
+-   Linked List
+    -   intersection
+    -   cycle
+        -   marker: use data field or pointer field
+        -   slow pointer and fast pointer
+        -   stack / recursive
 -   Hash Table
     -   [collision](http://www.ruanyifeng.com/blog/2018/09/hash-collision-and-birthday-attack.html)
 
@@ -1345,6 +1538,17 @@ Algorithm
 
 ### Advanced Algorithm
 
+#### Dynamic Programming
+
+-   Overview
+    -   Dynamic Programming = State + State-Transition
+    -   Dimension = discrete amount
+    -   Augmented Dimension = dual pivot / set
+    -   State Transition = Divide-and-conquer / Topology
+-   Property
+    -   `min`, `max`
+    -   `set`
+
 ### Probablistic and Randomness
 
 -   Shuffle
@@ -1419,11 +1623,97 @@ Algorithm
 -   grammar
     -   `>>`
     -   `a + (b) ? x : y`
+-   structure
+    -   for linked-list, use branch
 -   memory
     -   iterating while modifying
+    -   modifying while referencing
+        -   `back = v.back(); v.push_back(0);`
+
+### Optimization
+
+-   `unordered_map`
+-   modular space
 
 Interview Record
 ----------------
+
+### Project Summary
+
+#### Optix Ray Tracer
+
+-   problem
+    -   bsdf material
+    -   thousands of lights
+    -   point cloud tracing
+-   physically rendering
+    -   multiple importance sampling
+-   optimization
+    -   point cloud mapping (preprocess pass)
+        -   `ply` point cloud -\> float3 buffer -\> float2 buffer -\>
+            memory
+    -   intersection reuse
+        -   first pass: intersection
+            -   light-irrelavant data
+                -   space coordianate
+                -   surface coordinate: texcoord and normal
+                -   attenuation
+                -   material id
+        -   second pass: shading
+            -   reuse intersection
+    -   machine learning denoiser
+    -   cuda program optimization
+        -   branch
+        -   per-ray data
+
+#### Coplus Parallel Library
+
+-   `coroutine`
+    -   state: `Waiting`, `Ready`, `Finished`
+    -   context
+        -   program context
+        -   calling context: thread local store
+        -   dependency context
+    -   semantics
+        -   ready queue: mpmc queue
+        -   wait queue: immutable push-only stack
+            -   id locatable
+-   memory pool
+    -   memory dyeing
+    -   buddy algorithm
+-   data structure
+    -   slow multiple-consumer-multiple-producer queue
+        -   performance by the cost of correctness
+        -   rependent count to distribute pressure
+        -   two CAS
+            -   add top
+            -   add rependent if failed
+    -   fast multiple-consumer-multiple-producer queue
+        -   divide-and-conquer: each producer get thread-local sub-queue
+            -   distribute consumer pressure
+            -   no race condition for producer
+        -   free-list and queue-pool
+        -   two CAS for consumer, mutex for producer handle
+    -   push-only stack
+        -   balance the need for variable-length structure
+            -   fixed-length array \* fixed-length bucket
+            -   bucket is lazy-initialized
+        -   two CAS
+            -   add top
+            -   initialize bucket
+
+#### sBase Database
+
+-   storage engine
+    -   B-Flow tree
+-   concurrent control
+    -   page-level
+
+#### SpecTM transactional memory
+
+-   motivation
+-   isolation
+-   durability
 
 ### Bytedance
 
@@ -1586,6 +1876,8 @@ focus on concrete knowledge, less theory talk.
 -   algorithm
     -   rotate-k (from beauty-of-code): boom
 
+**third-interview**
+
 **result-and-summary**
 
 ### Pony.ai
@@ -1645,6 +1937,7 @@ Job Experience
 
 -   job
     -   strongly focus on project
+    -   late interview mail
 
 #### Alibaba
 
@@ -1674,6 +1967,11 @@ Job Experience
     -   universal employment
         -   = resume + algorithm
         -   [questions](./google-algorithm.md)
+
+#### Microsoft
+
+-   ATC
+-   MSRA
 
 ### Build Open-Source Experience
 
