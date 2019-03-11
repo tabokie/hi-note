@@ -3,6 +3,7 @@
     -   [Basic Knowledge](./basics.md)
     -   [Programming](./programming.md)
     -   [System Design](./system-design.md)
+        -   [MIT 6.824](./mit.6.824.md)
     -   [Infrastructure](./infra.md)
     -   [Graphics](./graphics.md)
     -   [Interview](./interview.md)
@@ -10,13 +11,15 @@
 **todos**
 
 -   [ ] Algorithm
-
-MFC消息处理
+-   [ ] MFC消息处理
+-   [ ] System Design: theory and practice
+-   [ ] Mit 6.824
+-   [ ] Patch up Basic and Programming
 
 **Resources**
 
 -   [hacking-the-software-engineer-interview](https://puncsky.com/hacking-the-software-engineer-interview/)
--   Book: <Elements of Programming Interviews>
+-   Book: Elements of Programming Interviews
 -   [System Design
     Primer](https://github.com/donnemartin/system-design-primer)
 -   [Leetcode VIP](http://206.81.6.248:12306/leetcode/algorithm)

@@ -1,12 +1,17 @@
+-   [Database](#database)
+    -   [Redis](#redis)
+    -   [MySQL](#mysql)
+    -   [Serialize Protocol](#serialize-protocol)
+
 Database
 --------
 
-## Redis
+### Redis
 
 -   Data Structure
     -   use keys?
 
-## MySQL
+### MySQL
 
 -   Index
     -   first index
@@ -15,4 +20,7 @@ Database
     -   Isolation
         -   level, default, implementation
 
-serialize
+### Serialize Protocol
+
+-   JSON
+-   Protobuf

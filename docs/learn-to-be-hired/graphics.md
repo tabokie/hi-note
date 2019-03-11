@@ -1,3 +1,8 @@
+-   [Graphics](#graphics)
+    -   [Rendering](#rendering)
+    -   [Geometry](#geometry)
+    -   [High-Level Algorithm](#high-level-algorithm)
+
 Graphics
 --------
 

@@ -1,3 +1,34 @@
+-   [Interview Record](#interview-record)
+    -   [Project Summary](#project-summary)
+        -   [Optix Ray Tracer](#optix-ray-tracer)
+        -   [Coplus Parallel Library](#coplus-parallel-library)
+        -   [sBase Database](#sbase-database)
+        -   [SpecTM transactional memory](#spectm-transactional-memory)
+        -   [Crowd](#crowd)
+    -   [Bytedance](#bytedance)
+        -   [Backend Develop Intern at
+            EE](#backend-develop-intern-at-ee)
+    -   [Alibaba](#alibaba)
+        -   [Antfin Big Data Platform
+            Intern](#antfin-big-data-platform-intern)
+    -   [Tencent](#tencent)
+        -   [Keen Security Lab](#keen-security-lab)
+        -   [MySQL](#mysql)
+    -   [Netease](#netease)
+        -   [LeiHuo Game Engine Intern](#leihuo-game-engine-intern)
+-   [Job Experience](#job-experience)
+    -   [Company Overview](#company-overview)
+        -   [PingCAP](#pingcap)
+        -   [Netease](#netease-1)
+        -   [Bytedance](#bytedance-1)
+        -   [Tencent](#tencent-1)
+        -   [Alibaba](#alibaba-1)
+        -   [Hulu](#hulu)
+        -   [Google](#google)
+        -   [Microsoft](#microsoft)
+    -   [Build Open-Source Experience](#build-open-source-experience)
+    -   [Transfer to USA](#transfer-to-usa)
+
 Interview Record
 ----------------
 
@@ -75,8 +106,8 @@ Interview Record
 #### SpecTM transactional memory
 
 -   motivation
-    -   larger atomic
-    -   slow
+    -   in concept: larger atomic
+    -   in practice: slow for write-barrier and logging
 -   isolation
     -   dependency tracking
 -   durability
@@ -85,8 +116,14 @@ Interview Record
 #### Crowd
 
 -   node interface
+    -   time
+    -   network
+    -   response\
 -   node simulation
     -   discrete event simulate
+        -   concurrent priority queue
+            -   skiplist-based
+            -   optimize CAS operation by `delete` flag
 
 ### Bytedance
 
@@ -188,9 +225,15 @@ focus on concrete knowledge, less theory talk.
 
 (19-02)
 
+**pre-interview**
+
+missing, mainly about CAS and memory.
+
 #### MySQL
 
 (19-03)
+
+**first-interview**
 
 -   project
     -   sBase
@@ -212,6 +255,10 @@ focus on concrete knowledge, less theory talk.
         -   process and thread
 -   Database
     -   join type
+
+**result**
+
+turn down for bad interview taste and dull work
 
 ### Netease
 
@@ -301,8 +348,6 @@ focus on concrete knowledge, less theory talk.
 
 **result-and-summary**
 
-### Pony.ai
-
 Job Experience
 --------------
 
@@ -363,6 +408,18 @@ Job Experience
 -   job
     -   strongly focus on project
     -   late interview mail
+    -   bad interview
+
+#### Bytedance
+
+-   job
+    -   no redundant department details
+    -   efficient
+
+#### Tencent
+
+-   job
+    -   awful resume race
 
 #### Alibaba
 

@@ -1,6 +1,40 @@
-# Language
+-   [Language](#language)
+    -   [Generic](#generic)
+        -   [Scripting Language](#scripting-language)
+        -   [Functional Language](#functional-language)
+    -   [C++](#c)
+        -   [Underneath](#underneath)
+        -   [Memory](#memory)
+        -   [Polymorphism](#polymorphism)
+        -   [Multi-Thread](#multi-thread)
+        -   [Template](#template)
+        -   [Standard Library](#standard-library)
+        -   [Misc](#misc)
+    -   [Java](#java)
+        -   [Basic](#basic)
+        -   [Class](#class)
+        -   [Design Pattern](#design-pattern)
+        -   [Standard Data Structure](#standard-data-structure)
+        -   [Parallel Programming](#parallel-programming)
+        -   [IO](#io)
+        -   [RTTI and Reflection](#rtti-and-reflection)
+        -   [JVM](#jvm)
+        -   [Industry](#industry)
+-   [Programming Practice](#programming-practice)
+    -   [Debugging and Optimization](#debugging-and-optimization)
+    -   [Parallel Programming](#parallel-programming-1)
+        -   [Overview](#overview)
+        -   [Paradigm](#paradigm)
+        -   [Memory](#memory-1)
+        -   [Lock and Model](#lock-and-model)
+        -   [Lock Free](#lock-free)
+        -   [Concurrent Util](#concurrent-util)
 
-## Generic
+Language
+========
+
+Generic
+-------
 
 ### Scripting Language
 
@@ -12,7 +46,8 @@
 
 ### Functional Language
 
-## C++
+C++
+---
 
 ### Underneath
 
@@ -131,14 +166,16 @@
 -   name hiding versus override (virtual)
     -   only call function w.r.t. to reference type
 
-    ```
-    virtual Base::f(A)
-    Derived::f(B)
-    Base i.f(B) // base
-    Derived i.f(A) // derived
-    ```
+    <!-- -->
+
+        virtual Base::f(A)
+        Derived::f(B)
+        Base i.f(B) // base
+        Derived i.f(A) // derived
+
     -   case A: different parameter
     -   case B: non-virtual override
+
 -   RTTI
 -   typecast
     -   `static_cast`: static resolve type conversion
@@ -184,7 +221,7 @@
     -   basic form:
         -   `<T>::useObject(T a) { a.interface() }`
     -   strict form:
-        -   `<T>::InterfaceClass { interface(){ cast<T>::interface(); } }` 
+        -   `<T>::InterfaceClass { interface(){ cast<T>::interface(); } }`
             -   non-virtual
             -   name-hidding
         -   `InstanceClass: InterfaceClass<InstanceClass>`
@@ -239,7 +276,8 @@
     -   function
     -   return value
 
-## Java
+Java
+----
 
 ### Basic
 
@@ -774,10 +812,11 @@
 -   Project
     -   `chm`: microsoft, html
 
+Programming Practice
+====================
 
-# Programming Practice
-
-## Debugging and Optimization
+Debugging and Optimization
+--------------------------
 
 -   Memory
     -   Failure (`malloc` failed)
@@ -813,7 +852,8 @@
     -   vector instruction
 -   GPU
 
-## Parallel Programming
+Parallel Programming
+--------------------
 
 ### Overview
 
@@ -911,6 +951,8 @@
 
 ### Lock Free
 
-### Mics
+### Concurrent Util
 
 -   Concurrent Timer
+-   Data Structure
+    -   lock-free circular queue: lamport
