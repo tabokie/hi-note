@@ -83,6 +83,9 @@ Golang
     -   `after, ok := before.(int)`
     -   `switch before.(type) { case int }`
     -   `switch after := before.(type) { case int: return after }`
+-   for-range
+    -   by value
+    -   single capture variable
 
 ### Garbage Collection
 
@@ -103,6 +106,8 @@ Golang
     -   safe receive
 -   sync
 -   context
+-   goroutine
+    -   schedule
 
 Rust
 ----
