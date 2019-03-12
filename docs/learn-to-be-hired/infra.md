@@ -24,3 +24,17 @@ Database
 
 -   JSON
 -   Protobuf
+
+## Framework
+
+### Spring
+
+-   Single Instance Pattern
+-   循环依赖
+-   Bean lifetime
+-   AOP
+    -   implementation
+-   IOC
+-   拦截器
+-   MVC
+    -   Annotation

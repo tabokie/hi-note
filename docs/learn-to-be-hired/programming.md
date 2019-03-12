@@ -1,7 +1,4 @@
 -   [Language](#language)
-    -   [Generic](#generic)
-        -   [Scripting Language](#scripting-language)
-        -   [Functional Language](#functional-language)
     -   [C++](#c)
         -   [Underneath](#underneath)
         -   [Memory](#memory)
@@ -33,23 +30,10 @@
 Language
 ========
 
-Generic
--------
-
-### Scripting Language
-
--   Definition
-    -   simplify repeated work
-    -   human-oriented
--   example
-    -   `Unix shell`
-
-### Functional Language
-
 C++
 ---
 
-### Underneath
+### Compilation, Binary and Assembly
 
 -   Compilation
     -   elf: binary under Linux
@@ -60,16 +44,18 @@ C++
         -   section header table
         -   vtable stored in rodata (read-only)
     -   gdb debugger
+        -   `g++ -g` to compile
 -   ABI: application binary interface
     -   mangle: sourcecode id -\> ABI id
     -   RTTI `typeid` operator will return ABI id (`.name()`)
     -   demangle: cross-vendor C++ ABI
         -   `abi::__cxa_demangle`
--   Runtime
-    -   Function Stack
-        -   parameter
-            -   from right to left
-            -   easily fetch first of variable-length parameters
+-   implementation
+    -   function parameter
+        -   from right to left
+        -   easily fetch first of variable-length parameters
+    -   class function
+        -   `function(this, ...)`
 
 ### Memory
 
@@ -86,51 +72,67 @@ C++
     -   name-mangling
     -   misc
         -   definition without `public`, `static` modifiers
--   move semantics
-    -   move constructor and copy constructor
-        -   `template emplace_back(T&&)` \> `push_back(item_type&&)`
-    -   right reference
-        -   un-named variable's pointer
-    -   forward reference (universal reference): `T&&`
-        -   reference collapsing
+-   reference
+    -   left reference: pointer
+    -   right reference: un-named variable and pointer
+        -   move constructor and copy constructor
+        -   forward reference (universal reference): `T&&`
+            -   reference collapsing
+                -   `template emplace_back(T&&)` \> `push_back(item_type&&)`
     -   copy elision (RVO / NRVO) to optimize return by value
 -   allocation
     -   `malloc`: heap
         -   `mmap` for large chunk
         -   `brk`: break pointer in Linux
         -   free list by C library
-    -   `new`: free store
-    -   `new []`: store size of array, memory chunk \>= memory used
+    -   `new` and `delete`: free store
+        -   exception safety
+            -   ctor should be `no throw`
+            -   `bad_alloc`
+            -   `new (std::nothrow) Obj`: surpress exception
+            -   `set_new_handler( void (*p)() )`
+        -   call one dtor if needed, then free chunk
+            -   `delete ( new int[10] )` has no leak
+    -   `new []` and `delete []`
+        -   store size of array
+            -   before data chunk
+            -   memory chunk \> data chunk
+        -   call every dtor, free real chunk (p-4)
+    -   placement new `new (addr) Obj`
+        -   no allocation, only ctor
     -   `allocator`
         -   `stl`
             -   128 KB
             -   first: `malloc`/`free`
             -   second: built-in memory pool
-    -   `delete`
-        -   exception
-        -   `delete`: free memory chunk, call dtor if needed
-            -   `delete (new int[10])`: no leak
-        -   `delete []`: free (p-4) chunk
+        -   `tcmalloc` <TODO>
 -   smart pointer
-    -   `make_shared` \> `shared_ptr`
-        -   target and ref info will be stored in one contiguous block,
-            cut down alloc times
-            -   drawback: weak\_ref will in essence act like strong
-                reference, because weak ref info is stored with obj
-        -   atomicly manage memory ??
-            -   ``` {.cpp}
-                p_ = new Obj();
-                // exception
-                p = shared_ptr(_p);
-                ```
-
-        -   raw pointer reuse:
-            -   ``` {.cpp}
-                p = new Obj();
-                p1 = shared_ptr(_p);
-                p2 = shared_ptr(_p);
-                // repeat dtor if p1 p2 are released
-                ```
+    -   `make_shared`
+        -   process
+            -   allocate sizeof(Obj + Meta)
+            -   placement new Obj
+            -   initialize Meta
+                -   reference count = 1, weak reference = 0
+                -   **copy dtor**
+                    -   `p = shared_ptr<Base>( make_shared<Derived>() )`
+        -   `make_shared` \> `shared_ptr`
+            -   target and ref info will be stored in one contiguous block,
+                cut down alloc times
+                -   drawback: weak\_ref will in essence act like strong
+                    reference, because weak ref info is stored with obj
+            -   exception safety
+                -   ``` {.cpp}
+                    p_ = new Obj();
+                    // exception
+                    p = shared_ptr(_p);
+                    ```
+            -   raw pointer reuse:
+                -   ``` {.cpp}
+                    p = new Obj();
+                    p1 = shared_ptr(_p);
+                    p2 = shared_ptr(_p);
+                    // repeat dtor if p1 p2 are released
+                    ```
     -   get smart pointer copy from class (extension of
         raw-pointer-reuse-problem)
         -   inherit from `std::enable_shared_from_this<Type>`
@@ -140,11 +142,14 @@ C++
     -   thread-safety
         -   ref-count field: atomic
         -   ref-count + pointer: non-thread-safe
+    -   other smart pointer
+        -   `weak_ptr`
+        -   `intrusive_ptr`
+        -   `scope_ptr`: no-copy
+        -   `unique_ptr`: no-copy, ownership
 
 ### Polymorphism
 
--   class implementation
-    -   `func(this);`
 -   virtual function: dynamic poly
     -   vtable: table of virutal function pointer
         -   RTTI information
@@ -486,6 +491,9 @@ Java
 
 -   Thread
     -   `run()`, `start()`, `yield()`
+    -   ThreadLocal
+        -   internal: `ThreadLocalMap m = getMap(Thread.getCurrentThread())`
+        -   `new ThreadLocal<Object>() { public Object initialValue() }`
 -   Lock
     -   `synchronized`
         -   Object: `monitorenter` & `monitorexit` instruction
@@ -800,18 +808,6 @@ Java
     -   Direct Memory
         -   `DirectByteBuffer`
 
-### Industry
-
--   Spring
-    -   Single Instance Pattern
-    -   循环依赖
-    -   Bean lifetime
-    -   AOP
-        -   implementation
-    -   IOC
--   Project
-    -   `chm`: microsoft, html
-
 Programming Practice
 ====================
 
@@ -819,8 +815,8 @@ Debugging and Optimization
 --------------------------
 
 -   Memory
-    -   Failure (`malloc` failed)
-        -   OOM
+    -   Failure
+        -   OOM (`malloc` failed)
             -   Large Request
                 -   Lazy request
                 -   File: mmap
@@ -833,6 +829,7 @@ Debugging and Optimization
             -   GC raised (in Java): 98% timeslice for GC but only
                 retrieve 2% memory
         -   Memory Trespassing
+            -   `valgrind`
 -   Cache
     -   shared cacheline, false sharing
     -   prefetch
@@ -886,10 +883,11 @@ Parallel Programming
     -   own stack and regisster
 -   Coroutine
     -   Motivation
-        -   block to wait for logical event
-        -   or asynchronous callback which require additional state
-            -   state in closure
-    -   control flow is consistent with logical flow
+        -   control flow is consistent with logical flow
+            -   block to wait for logical event
+            -   or asynchronous callback which require additional state
+                -   state in closure
+        -   lightweight switch: frequency and dataload and userspace 
     -   Application
         -   Syntex Parser: `while(true): readToken(); go Parse();`
         -   State Machine
@@ -940,19 +938,33 @@ Parallel Programming
             -   rlock: if (seq is even) read; if (seq != old seq) redo;
                 wlock: lock(mu); seq ++;
     -   Lock implementation
-        -   CAS
+        -   CAS + OS
+            -   `Futex`: fast userspace mutex
+                -   first CAS
+                -   then wait by OS
     -   appendix: [Lock C Implementations](./lock-c-impl.txt)
--   Condition Variable: signal to waiters
+-   Condition Variable
+    -   mutex: avoid signal loss
+        -   `wait: lock, enqueue, unlock`
+        -   `notify` must come with lock
+    -   status: avoid spurious(虚假) wakeup
     -   惊群效应
-        -   solution
+        -   `accept` before linux 2.6
+        -   `epoll`
+        -   `thread.wait()`
+            -   `notify_one`
 -   DeadLock
 -   Procuder - Customer
 -   Performance
-
-### Lock Free
 
 ### Concurrent Util
 
 -   Concurrent Timer
 -   Data Structure
-    -   lock-free circular queue: lamport
+    -   lock-free hash table
+        -   lock-free by linked table
+        -   leveled hash table
+    -   lock-free SPSC circular queue
+        -   lamport fifo
+        -   linux kfifo
+            -   two-power size to avoid modular

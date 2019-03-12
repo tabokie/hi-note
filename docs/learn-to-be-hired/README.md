@@ -36,6 +36,7 @@
 -   [interview](https://github.com/huihut/interview)
 -   [interview](https://hit-alibaba.github.io/interview/index.html)
 -   [coding-interview-university](https://github.com/jwasham/coding-interview-university)
+-   [system-design-interview](https://github.com/checkcheckzz/system-design-interview)
 -   Learning
     -   [Chromium\_doc\_zh](https://github.com/ahangchen/Chromium_doc_zh):
         Chromium中文文档，学习google家的架构
@@ -58,6 +59,8 @@
         中文的C++ Template的教学指南
     -   [Distributed-Systems](https://github.com/feixiao/Distributed-Systems):
         MIT课程《Distributed Systems 》学习和翻译
+    -   [db-dev](https://github.com/huachaohuang/awesome-dbdev)
+    -   [build-distributed-sql](https://github.com/ngaut/builddatabase)
     -   Blog
         -   [TechNotes](https://github.com/GHScan/TechNotes): Scan's
             personal technical notes

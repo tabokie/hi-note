@@ -199,6 +199,7 @@ Design
     -   distributed lock
         -   `zookeeper`'s ZAB protocol
         -   `redis`
+        -   database record
     -   distributed id
         -   `zookeeper`
     -   file synchronize
