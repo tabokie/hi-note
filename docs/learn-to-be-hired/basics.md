@@ -39,6 +39,7 @@ Network
 -   HTTP/2 multiplexing
     -   stem from Google SPDY
     -   streamID, allow disorder and priority queue
+-   HTTP Cache <TODO>
 
 **TCP**
 
@@ -200,7 +201,7 @@ Operating System & Linux
         -   parent already exit
         -   will be adopted by init process (pid=1)
     -   stopped
--   process and thread (linux)
+-   Creation (linux)
     -   `fork`
         -   `copy-on-write`
         -   copy `task_struct`
@@ -215,9 +216,19 @@ Operating System & Linux
         -   parent will wait for child `exit(1)`, or loop at `vfork`
     -   `clone`: thread-like
         -   customized copy, namespace, brother process
+            -   use `CLONE_VM = true`: share memory space
+            -   use `CLONE_FILES = true`
+            -   use `CLONE_PARENT = true`: become brother
+            -   `CLONE_THREAD`: thread group
         -   use closure parameter
-        -   new kernel stack
     -   `exec`: overwrite with new program
+    -   thread and process
+        -   kernel-thread: use `clone (CLONE_THREAD = true)`
+            -   `gettid -> pid_t`
+            -   `task_struct* group_leader`
+            -   `mm == NULL`
+        -   pthread (user-thread)
+            -   `pthread_self -> pthread_id`: offset to task_struct
 -   Process Scheduling
 
 #### Process Communication and Synchronization

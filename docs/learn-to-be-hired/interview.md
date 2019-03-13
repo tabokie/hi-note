@@ -419,7 +419,8 @@ Job Experience
 #### Tencent
 
 -   job
-    -   awful resume race
+    -   awful experience
+    -   wrong department holds on to your resume
 
 #### Alibaba
 

@@ -29,9 +29,6 @@ Theory
         2.以分布式事务为主的一类主要是二段提交，这些分布式数据库管理器及数据库都支持
         3.以若一致性为主的，主要代表是Cassandra的W、R、N可调节的一致性
         4.以租赁机制为主的，主要是一些分布式锁的概念，目前还没有看到纯粹“分布式”锁的实现
-        5.以失败探测为主的，主要是Gossip和phi失败探测算法，当然也包括简单的心跳
-        6.以弱一致性、因果一致性、顺序一致性为主的，开源尚不多，但大都应用在Linkedin、Twitter、Facebook等公司内部
-        7当然以异步解耦为主的，还有各类Queue
 
 -   Model
     -   Failure Model
@@ -39,11 +36,35 @@ Theory
         -   fail-slow
         -   byzantine
     -   webserver
--   Consensus Algorithm
-    -   2PC
-    -   Paxos
-    -   Raft
-    -   ZAB
+
+### Consensus Algorithm
+
+-   2PC
+-   Paxos
+-   Raft
+-   ZAB
+-   Eventual Consistency
+    -   Gossip (`Cassandra`, aka Anti-Entropy, @Efficient Reconciliation and Flow Control for Anti-Entropy Protocols, @Epidemic Algorithms for Replicated Database Maintenance)
+        -   Operation
+            -   push(key, value, version) to node
+            -   pull(key, version) from node
+            -   push-pull(key, version): pull then push
+        -   Protocol: Anti-Entropy
+            -   SI = Suspective & Infective
+            -   synchronize when inconsistent
+        -   Protocol: Rumor-Mongering
+            -   SIR = Suspective & Infective & Removed
+            -   remove after interval
+        -   Drawback
+            -   delay
+            -   redundant message
+-   Fault Detection
+    -   Heartbeat
+        -   Drawback:
+            -   sensitive to network jitter
+            -   decentralized network
+    -   Phi
+        -   exponential distribution
 
 Practice
 --------
@@ -92,7 +113,7 @@ Practice
     -   `VoltDB`, `GreenPlum`
     -   `mycat` sharding
 -   Aggregated NoSQL - Key-Value
-    -   `Redis`
+    -   `Redis`: see [redis](./infra.md#redis)
 -   Aggregated NoSQL - Column-Family
     -   `HBase`
     -   `Cassandra`
