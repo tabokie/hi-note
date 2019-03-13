@@ -8,14 +8,6 @@
     -   [Graphics](./graphics.md)
     -   [Interview](./interview.md)
 
-**todos**
-
--   [ ] Algorithm
--   [ ] MFC消息处理
--   [ ] System Design: theory and practice
--   [ ] Mit 6.824
--   [ ] Patch up Basic and Programming
-
 **Resources**
 
 -   [hacking-the-software-engineer-interview](https://puncsky.com/hacking-the-software-engineer-interview/): system design
