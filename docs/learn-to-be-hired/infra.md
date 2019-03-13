@@ -2,6 +2,8 @@
     -   [Redis](#redis)
     -   [MySQL](#mysql)
     -   [Serialize Protocol](#serialize-protocol)
+-   [Framework](#framework)
+    -   [Spring](#spring)
 
 Database
 --------
@@ -40,21 +42,25 @@ Database
     -   Pipelining
         -   Motivation
             -   reduce latency due to RTT
-            -   reduce network IO context switch    
+            -   reduce network IO context switch\
     -   Transaction
         -   Procedure
             -   `MULTI` to start
             -   Queue: error is detected by client
             -   Discard: clear queue
-            -   Execute: 
+            -   Execute:
                 -   null reply: fail due to concurrent access
-                -   bunk reply: error will not stop the execution of other commands
-                    -   insight: Redis only error when logical error, which isn't solvable by rollback
+                -   bunk reply: error will not stop the execution of
+                    other commands
+                    -   insight: Redis only error when logical error,
+                        which isn't solvable by rollback
         -   CAS by `WATCH`: make `EXEC` conditional
             -   `WATCH` will monitor modification to certain key
-            -   `EXEC` will exec only if `WATCH`ed keys are not modified (else return null)
+            -   `EXEC` will exec only if `WATCH`ed keys are not modified
+                (else return null)
 -   Practice
-    -   Distributed Deployment ([link](https://redis.io/topics/cluster-spec))
+    -   Distributed Deployment
+        ([link](https://redis.io/topics/cluster-spec))
         -   hash-tagged partition
             -   full-connected with Gossip ping-pong
             -   `MOVED` reply to redirect client request
@@ -68,9 +74,12 @@ Database
                 -   to avoid unlock when expired
             -   try lock all masters, rollback if timeout or minority
             -   Loophole
-                -   process pausing: request -> gc -> lock expire -> get stale response
-                -   clock skew: request -> ABC grant -> C early expire -> CDE form majority
-                -   fencing token: use monotonic token to reject expired request
+                -   process pausing: request -\> gc -\> lock expire -\>
+                    get stale response
+                -   clock skew: request -\> ABC grant -\> C early expire
+                    -\> CDE form majority
+                -   fencing token: use monotonic token to reject expired
+                    request
     -   LRU Cache
         -   `maxmemory`
         -   Eviction Policy
@@ -98,20 +107,21 @@ Database
             -   **impl**
                 -   in fact is `SNAPSHOT` level, no phantom read
                 -   use read-view no read lock, write use **gap lock**
-                -   write skew problem, see [system-design](./system-design.md)
+                -   write skew problem, see
+                    [system-design](./system-design.md)
         -   `READ_COMMITED`
             -   avoid A.read; B.write; A.read;
             -   **impl**: command-level read-view, only record lock
         -   `READ_UNCOMMITED`
     -   MVCC
         -   multiversion record
-            -   record = row_header + payload
-            -   row_header = transaction_id + rollback_ptr
-            -   rollback_ptr -> undo record in Rollback Segment
+            -   record = row\_header + payload
+            -   row\_header = transaction\_id + rollback\_ptr
+            -   rollback\_ptr -\> undo record in Rollback Segment
         -   read view
             -   creator id
-            -   low_limit: unborned transaction
-            -   up_limit: finished transaction
+            -   low\_limit: unborned transaction
+            -   up\_limit: finished transaction
             -   ids: uncommitted transaction
 -   Storage Engine
     -   MyISAM: good for analysis
@@ -123,7 +133,8 @@ Database
             -   table-level lock
             -   no transaction, no recovery
     -   InnoDB
-        -   index: 聚簇索引, secondary index lookup primary key as pointer
+        -   index: 聚簇索引, secondary index lookup primary key as
+            pointer
             -   fulltext index since 5.6
         -   concurrent
             -   row-level lock
@@ -134,7 +145,7 @@ Database
                 -   mvcc
 -   Storage Structure
     -   page: doubly-linked list
-        -   page directory: primary-key -> record pointer
+        -   page directory: primary-key -\> record pointer
         -   user records: singly-linked list
 -   Sharding
     -   read / write partition
@@ -151,7 +162,8 @@ Database
     -   MFC Serialization
     -   .Net
 
-## Framework
+Framework
+---------
 
 ### Spring
 
@@ -175,12 +187,14 @@ Database
         -   method
             -   `Higher(Lower)`: ctor injection
             -   `setLower(Lower)`: setter injection
-            -   `setLower(Lower)` and `ConcreteLower: Lower`: interface injection
+            -   `setLower(Lower)` and `ConcreteLower: Lower`: interface
+                injection
     -   IoC Container: factory from dependency
     -   Other Feature
         -   loosely coupled
         -   recursive dependency
-    -   Initialization: XML -> Resource -> BeanDefinition -> BeanFactory
+    -   Initialization: XML -\> Resource -\> BeanDefinition -\>
+        BeanFactory
     -   Bean
         -   type `@Scope("type")`
             -   singleton (default)
@@ -195,18 +209,24 @@ Database
             -   property setting
                 -   XXAware interface
             -   (a) BeanPostProcessor::postProcessBeforeInitialization
-            -   @PostConstruct / InitializingBean::afterPropertySet / XML::init-method
+
+            -   @PostConstruct / InitializingBean::afterPropertySet /
+                XML::init-method
             -   (a) BeanPostProcessor::postProcessAfterInitialization
-            -   @PreDestroy / DisposableBean::destroy / XML::destroy-method
+
+            -   @PreDestroy / DisposableBean::destroy /
+                XML::destroy-method
 -   SpringMVC
     -   Procedure
-        -   Controller: request -> DispatcherServlet use HandlerMapping -> Handler (controller)
-        -   Execution: handler -> HandlerAdapter -> execute -> produce ModelAndView (data and logical view)
-        -   View: view -> ViewResolver -> lookup View
-        -   Model: model -> DispatcherServlet -> View -> client
+        -   Controller: request -\> DispatcherServlet use HandlerMapping
+            -\> Handler (controller)
+        -   Execution: handler -\> HandlerAdapter -\> execute -\>
+            produce ModelAndView (data and logical view)
+        -   View: view -\> ViewResolver -\> lookup View
+        -   Model: model -\> DispatcherServlet -\> View -\> client
     -   Annotation
     -   Interceptor (拦截器)
         -   `HandlerInterceptor`
-            -   preHandle -> boolean
+            -   preHandle -\> boolean
             -   postHandle: after Handler execution
             -   afterCompletion: after all

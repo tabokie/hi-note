@@ -458,6 +458,11 @@ Java
 -   Queue
     -   LinkedList
     -   PriorityQueue: heap
+    -   BlockingQueue: mutex and wait on size
+        -   ArrayBlockingQueue
+        -   LinkedBlockingQueue
+        -   PriorityBlockingQueue
+    -   ConcurrentLinkedQueue: CAS
 -   Map
     -   TreeMap: rb-tree
     -   HashMap
@@ -477,6 +482,7 @@ Java
         -   `count()`:
             -   each try execute two pass without lock
             -   fourth try will lock all
+    -   ConcurrentSkipListMap
     -   LinkedHashMap
         -   ordered by usage (LRU)
             -   `accessOrder = false`: insert order
@@ -490,32 +496,75 @@ Java
 ### Parallel Programming
 
 -   Thread
-    -   `run()`, `start()`, `yield()`
+    -   Runnable: `void run()`, Callable<V>
+    -   outer manip
+        -   `run()`, `start()`
+        -   `interrupt()`
+            -   terminate if thread is in blocking / waiting state, throws `InterruptedException`
+    -   inner manip
+        -   `this.interrupted() -> boolean`
+        -   `Thread.sleep(mili)`
+        -   `Thread.yield()`
+    -   state
+        -   new
+        -   runnable
+        -   blocking: wait for mutex
+        -   waiting: `Object.wait()`, `join()`, `LockSupport.park()`->`LockSupport.unpart(Thread)`
+        -   timed waiting: `sleep`, `wait(mili)`, `join(mili)`, `parkUntil`
+        -   terminated
     -   ThreadLocal
         -   internal: `ThreadLocalMap m = getMap(Thread.getCurrentThread())`
         -   `new ThreadLocal<Object>() { public Object initialValue() }`
--   Lock
-    -   `synchronized`
-        -   Object: `monitorenter` & `monitorexit` instruction
-            -   `monitor` lock with counter (reentrant lock)
-        -   Method: `ACC_SYNCHRONIZED` identifies stored in
-            method\_info, then refer to instance `monitor` lock
-        -   optimization: refer to JVM Mark Word
-    -   `Object`: `wait()`, `notify()`
+    -   ThreadPool
+        -   ThreadPoolExecutor / Executor -> ExecutorService
+            -  `Executors` have no configuration port, TaskQueue::Size = INT_MAX, will cause OOM
+                -   `FixedThreadPool`, `SingleThreadExecutor`, `CachedThreadPool`, `ScheduledThreadPool`(timer)
+            -   `ThreadPoolExecutor(corePoolSize, maxPoolSize, workQueue, keepAliveTime)`
+                -   increasing policy
+                    -   if not reach corePoolSize: add Thread
+                    -   if workQueue isn't full: add to workQueue
+                    -   if not reach maxPoolSize: add Thread
+                    -   if more than corePoolSize and one Thread exceeds keepAliveTime: abandon and shrink
+                -   reject policy: `RejectedExecutionHandler`
+                    -   if reach maxPoolSize and workQueue full, call rejectedHandle
+                    -   `AbortPolicy` throws `RejectedExecutionException`
+                    -   `CallerRunsPolicy` run in current thread if executor is alive (coroutine)
+                    -   `DiscardOldestPolicy`
+                    -   `DiscardPolicy`
+            -   shutdown
+                -   `shutdown()`: wait for execution
+                -   `shutdownNow()`: interrupte all
+        -   Pool:: `execute`, `submit -> FutureTask`
+-   Synchronization
+    -   `Object.wait()`, `Object.notify()`
+    -   `lock.newCondition()` -> Condition -> `await()`, `signal()`
+    -   Lock
+        -   `synchronized`
+            -   Object: `monitorenter` & `monitorexit` instruction
+                -   `monitor` lock with counter (reentrant lock)
+            -   Method: `ACC_SYNCHRONIZED` identifies stored in
+                method\_info, then refer to instance `monitor` lock
+            -   optimization: refer to JVM Mark Word
     -   `ReentrantLock`
-    -   偏向锁 轻量锁 重量锁 转化
 -   Handler and Message Queue
--   util
+-   `AbstractQueuedSynchronizer` (aqs): lock manager
+    -   implementation
+        -   fifo by doubly-linked list
+        -   `volatile int state`
+        -   default function
+            -   `getState`, `setState`
+            -   `boolean compareAndSetState(int expect, int update)`
+        -   interface function
+            -   `tryAcquire(int)`, release 
+            -   `tryAcquireShared(int)`, release 
     -   Semaphore
-    -   CountDownLatch and Cyclic Barrier
-    -   Exchanger
--   ThreadPool
-    -   increasing strategy and denial strategy
+    -   CountDownLatch
+    -   Cyclic Barrier
+-   Exchanger
 -   juc
 -   Atomic
     -   `AtomicLong` versus `LongAdder`
         -   `Cell`: distribute count value
--   `AbstractQueuedSynchronizer` (aqs)
 -   Mics
     -   `volatile`
         -   cache visible
