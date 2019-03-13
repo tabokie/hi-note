@@ -21,7 +21,22 @@ Theory
     -   tolerant single point failure
 -   Theory
     -   CAP
-    -   ACID and BASE
+    -   ACID
+        -   Isolation ([link](https://www.cnblogs.com/ivan-uno/p/8274355.html))
+            -   Basic
+                -   `Serializable`
+                -   `Repeatable Read`
+                -   `Read Committed`
+                -   `Read Uncommitted`
+            -   Phenomenon
+                -   Dirty Read
+                -   Non-Repeatable Read
+                -   Phantom Read
+            -   Critique
+                -   Lost Update (rr): A.read; B.read; A.write(ref+1).commit; B.write(ref+2).commit;
+                -   Read Skew (rc)
+                -   Write Skew: A.check; B.check; A.operate; B.operate; C.check.failed;
+    -   BASE
 
     <!-- -->
 

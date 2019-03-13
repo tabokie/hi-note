@@ -88,28 +88,125 @@ Database
 
 ### MySQL
 
--   Index
-    -   first index
-    -   second index
 -   Transaction
     -   Isolation
-        -   level, default, implementation
+        -   `SERIALIZABLE`: update on same value is serialized
+            -   avoid A.select; B.insert.commit; A.select;
+            -   **impl**: two-phase lock
+        -   `REPEATABLE_READ` (default): read from origin state
+            -   avoid A.read; B.write.commit; A.read;
+            -   **impl**
+                -   in fact is `SNAPSHOT` level, no phantom read
+                -   use read-view no read lock, write use **gap lock**
+                -   write skew problem, see [system-design](./system-design.md)
+        -   `READ_COMMITED`
+            -   avoid A.read; B.write; A.read;
+            -   **impl**: command-level read-view, only record lock
+        -   `READ_UNCOMMITED`
+    -   MVCC
+        -   multiversion record
+            -   record = row_header + payload
+            -   row_header = transaction_id + rollback_ptr
+            -   rollback_ptr -> undo record in Rollback Segment
+        -   read view
+            -   creator id
+            -   low_limit: unborned transaction
+            -   up_limit: finished transaction
+            -   ids: uncommitted transaction
+-   Storage Engine
+    -   MyISAM: good for analysis
+        -   index: 非聚簇索引, store pointer at B+ leaf
+            -   lazy index update
+            -   table compression
+            -   no foreign key
+        -   concurrent
+            -   table-level lock
+            -   no transaction, no recovery
+    -   InnoDB
+        -   index: 聚簇索引, secondary index lookup primary key as pointer
+            -   fulltext index since 5.6
+        -   concurrent
+            -   row-level lock
+                -   record lock
+                -   gap lock: lock range, avoid phantom read
+                -   next-key lock: lock range and record
+            -   transaction and recovery
+                -   mvcc
+-   Storage Structure
+    -   page: doubly-linked list
+        -   page directory: primary-key -> record pointer
+        -   user records: singly-linked list
+-   Sharding
+    -   read / write partition
+    -   horizontal partition
 
 ### Serialize Protocol
 
--   JSON
--   Protobuf
+-   Format
+    -   JSON
+    -   XML
+-   Engine
+    -   Protobuf
+    -   Boost
+    -   MFC Serialization
+    -   .Net
 
 ## Framework
 
 ### Spring
 
--   Single Instance Pattern
--   循环依赖
--   Bean lifetime
--   AOP
+-   AOP: Aspect Oriented Programming
+    -   decouple peripheral service from controller
     -   implementation
--   IOC
--   拦截器
--   MVC
+        -   proxy: `ControllerProxy::{ service(); trueController(); }`
+            -   dynamic proxy (Spring)
+                -   handler interface
+                    -   `Enhancer: Interface`
+                    -   `Handler::invoke(Method)::{ this.method(); }`
+                -   call parent impl by reflection
+                    -   `Enhancer: Impl`
+                    -   `Enhancer::intercept(Object, Method)::{ service(); reflect.superMethod(); }`
+-   IOC: Inverse of Control
+    -   inverse control principle
+        -   before: request flow from high level to low level
+        -   now: low-level is built directly from request
+    -   dependency injection
+        -   method to construct high-level from low-level object
+        -   method
+            -   `Higher(Lower)`: ctor injection
+            -   `setLower(Lower)`: setter injection
+            -   `setLower(Lower)` and `ConcreteLower: Lower`: interface injection
+    -   IoC Container: factory from dependency
+    -   Other Feature
+        -   loosely coupled
+        -   recursive dependency
+    -   Initialization: XML -> Resource -> BeanDefinition -> BeanFactory
+    -   Bean
+        -   type `@Scope("type")`
+            -   singleton (default)
+                -   lazy-init
+            -   prototype (`new Bean()`)
+                -   Spring not responsible for its destruction
+            -   request (new at HTTP request)
+            -   session (share in HTTP Session)
+            -   globalSession
+        -   lifetime
+            -   create Bean
+            -   property setting
+                -   XXAware interface
+            -   (a) BeanPostProcessor::postProcessBeforeInitialization
+            -   @PostConstruct / InitializingBean::afterPropertySet / XML::init-method
+            -   (a) BeanPostProcessor::postProcessAfterInitialization
+            -   @PreDestroy / DisposableBean::destroy / XML::destroy-method
+-   SpringMVC
+    -   Procedure
+        -   Controller: request -> DispatcherServlet use HandlerMapping -> Handler (controller)
+        -   Execution: handler -> HandlerAdapter -> execute -> produce ModelAndView (data and logical view)
+        -   View: view -> ViewResolver -> lookup View
+        -   Model: model -> DispatcherServlet -> View -> client
     -   Annotation
+    -   Interceptor (拦截器)
+        -   `HandlerInterceptor`
+            -   preHandle -> boolean
+            -   postHandle: after Handler execution
+            -   afterCompletion: after all
