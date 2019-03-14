@@ -426,6 +426,13 @@ Java
     -   prototype
         -   `clone() -> Prototype`
 -   Action
+    -   Iterator
+        -   `Aggregate::createIterator -> Iterator`
+-   Structure
+    -   Decorator
+        -   `Decorator implements Interface:: Interface content`
+    -   Adapter
+        -   `AdapterToB implements A:: B content`
 
 ### Standard Data Structure
 
@@ -466,9 +473,13 @@ Java
 -   Map
     -   TreeMap: rb-tree
     -   HashMap
-        -   linked list to resolve collision
-        -   `Node[] table`
-        -   `Node { Hash, Key, Value, Next }`
+        -   implementation
+            -   linked list to resolve collision
+            -   `Node[] table`
+            -   `Node { Hash, Key, Value, Next }`
+        -   thread safety
+            -   when hash collision, possible value missing
+            -   resize transfer
     -   HashTable: thread-safe
         -   can't insert `null` value
     -   apache.FastHashMap
@@ -545,7 +556,10 @@ Java
             -   Method: `ACC_SYNCHRONIZED` identifies stored in
                 method\_info, then refer to instance `monitor` lock
             -   optimization: refer to JVM Mark Word
-    -   `ReentrantLock`
+        -   `ReentrantLock`
+    -   `Exchanger`: communication
+        -   put and swap by `exchange(Object)`
+        -   triggered when buffer is full, don't care thread details
 -   Handler and Message Queue
 -   `AbstractQueuedSynchronizer` (aqs): lock manager
     -   implementation
@@ -560,7 +574,6 @@ Java
     -   Semaphore
     -   CountDownLatch
     -   Cyclic Barrier
--   Exchanger
 -   juc
 -   Atomic
     -   `AtomicLong` versus `LongAdder`

@@ -20,26 +20,41 @@ Network
 -   HTTP/0.9 short connection
     -   each request = { DNS -\> three-step -\> transport -\> four-step
         }
--   HTTP/1.0 durable connection
-    -   Connection Field = Keep-Alive / Close
-    -   timeout = 5, max = 100
-    -   9
-        -   hold active processes until exaustion of pid
-        -   IO multuplexing
-        -   hold thread and buffer request until data is ready
-    -   Application
-        -   response on request
-        -   (长轮询) on request, server will wait for data ready or
-            timeout
-        -   (Comet HTTP stream) continously send data to client
--   HTTP/1.1 pipelined connection
-    -   default Keep-Alice
-    -   Head-of-Line-Blocking(HOLB) problem
-        -   multiple connection single queue
--   HTTP/2 multiplexing
-    -   stem from Google SPDY
-    -   streamID, allow disorder and priority queue
+    -   only `GET` request
+-   HTTP/1.0 
+    -   durable connection
+        -   Connection Field = Keep-Alive / Close
+        -   timeout = 5, max = 100
+        -   Server
+            -   hold active processes until exaustion of pid
+            -   IO multuplexing
+            -   hold thread and buffer request until data is ready
+        -   Application
+            -   response on request
+            -   (长轮询) on request, server will wait for data ready or
+                timeout
+            -   (Comet HTTP stream) continously send data to client
+    -   command: `PUT`, `PATCH`, `HEAD`, `OPTIONS`, `DELETE`
+-   HTTP/1.1 
+    -   pipelined connection
+        -   default Keep-Alice
+        -   Head-of-Line-Blocking(HOLB) problem
+            -   multiple connection single queue
+-   HTTP/2 
+    -   multiplexing
+        -   stem from Google SPDY
+        -   streamID, allow disorder and priority queue
 -   HTTP Cache <TODO>
+-   HTTPs
+    -   HTTP + SSL / TLS, port 443, server certificate A (private, public) and client random private key B
+    -   procedure
+        -   server send certificate to client
+        -   client validate and encrypt random key to server (use A.public)
+            -   validate certificate (against middle-man attack)
+                -   CA send private(hash(certificate)) as info
+                -   client check public(info) == hash(certificate)
+        -   server get client key (use A.private)
+        -   server send content (use B)
 
 **TCP**
 
@@ -165,8 +180,9 @@ Operating System & Linux
             -   send fid to socket buffer
         -   compact, cannot modify data
 -   virtual memory and page replacement
-    -   paging and segment
-    -   redis cache
+    -   page and segment
+        -   page is unit, while segment is chunk
+        -   logical address -> segmentation unit -> linear address -> paging unit -> physical address
 -   program link
     -   dynamic versus static linkage
 -   allocator

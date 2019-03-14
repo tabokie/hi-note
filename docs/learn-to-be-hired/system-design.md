@@ -81,6 +81,10 @@ Theory
     -   Phi
         -   exponential distribution
 
+### Transaction
+
+-   TCC: try - confirm - cancel
+
 Practice
 --------
 

@@ -69,3 +69,7 @@ seam carving
 解法3
 本题还有一种除去排序外只需时间复杂度 ​O(n)​ 的解法。有兴趣的同学可以试着思考一下并在本文下讨论哦
 ```
+
+```
+Given an integer array of size n, find the maximum of the minimum’s of every window size in the array. Note that window size varies from 1 to n.
+```
