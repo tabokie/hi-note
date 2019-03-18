@@ -28,6 +28,7 @@
 -   [interview](https://github.com/huihut/interview): basics
 -   [interview](https://hit-alibaba.github.io/interview/index.html): basics
 -   [system-design-interview](https://github.com/checkcheckzz/system-design-interview)
+-   [Java-blog](https://zhuanlan.zhihu.com/hinus)
 -   Learning
     -   [Chromium\_doc\_zh](https://github.com/ahangchen/Chromium_doc_zh):
         Chromium中文文档，学习google家的架构

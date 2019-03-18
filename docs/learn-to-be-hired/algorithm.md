@@ -178,6 +178,14 @@ Algorithm
     -   prefix
     -   diff
     -   length
+-   Tree
+    -   Morris Traversal: T(n) S(1)
+        -   use leaf pointer as precursor storage
+        -   inorder:
+            -   find leftMax
+            -   if pointed to `cur`, restore
+            -   else point to `cur` and descend
+    -   Height-balanced Tree
 
 #### Dynamic Programming
 
@@ -252,6 +260,8 @@ Algorithm
 -   Union and Intersection
 -   Data Container
     -   fifo
+-   Sort
+    -   mergesort
 
 ### Corner Case
 
@@ -282,3 +292,8 @@ Algorithm
     -   min amount of set
     -   negative
     -   overflow
+
+### Misc Insights
+
+-   use naive recursive as fallback solution
+-   your solution is no worse than others

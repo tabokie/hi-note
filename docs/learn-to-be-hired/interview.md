@@ -118,12 +118,18 @@ Interview Record
 -   node interface
     -   time
     -   network
-    -   response\
+    -   response
 -   node simulation
     -   discrete event simulate
         -   concurrent priority queue
             -   skiplist-based
             -   optimize CAS operation by `delete` flag
+
+### PingCAP
+
+#### Infra Intern
+
+**hr-and-project**
 
 ### Bytedance
 
@@ -219,6 +225,71 @@ focus on concrete knowledge, less theory talk.
     -   area you have touched
     -   why laboratory
 
+**first-interview (20::00 on phone, 1 hour + 30 min)**
+
+-   Java
+    -   HashMap
+        -   Node
+        -   resize factor
+        -   Java 1.8 version
+        -   thread safety
+            -   two condition
+            -   ConcurrentHashMap
+        -   retrieve by order: LinkedHashMap
+    -   ThreadPool
+        -   configuration
+        -   `keepAliveTime`
+        -   enqueue when
+            -   corePoolSize
+        -   corePoolSize configuration
+            -   CPU
+            -   daemon thread
+            -   task property (IO / compute)
+            -   more the better
+                -   context switch
+                -   memory
+    -   synchronization
+        -   lock / `synchronized`
+        -   reentrant
+        -   optimistic / pessimistic
+            -   merits
+    -   Spring IOC
+-   Network
+    -   Https
+        -   why use two protocol
+            -   can't create session by as ?
+            -   random key
+    -   `GET` and `POST`
+        -   can `GET` be used to transfer data
+    -   HTTP Header
+    -   `Cookies` and `Session`
+        -   motivation
+        -   obtain session persistency in server cluster
+            -   memory cache
+            -   master manifest
+-   System
+    -   load balance
+        -   RR and weighted RR
+        -   consideration
+            -   distance
+            -   ability
+            -   resource
+    -   database
+        -   inadequate connect number
+        -   `select` optimization
+            -   partition
+-   Algorithm
+    -   first 1000 in file
+    -   FIFO and Priority
+-   Dead End
+    -   Linux
+
+**result**
+
+After communicating with interviewer, transfer to OceanBase.
+
+#### Antfin OceanBase
+
 ### Tencent
 
 #### Keen Security Lab
@@ -229,7 +300,7 @@ focus on concrete knowledge, less theory talk.
 
 missing, mainly about CAS and memory.
 
-#### MySQL
+#### MySQL Group
 
 (19-03)
 
@@ -258,7 +329,7 @@ missing, mainly about CAS and memory.
 
 **result**
 
-turn down for bad interview taste and dull work
+turn down for bad interview taste and dull work.
 
 ### Netease
 
@@ -347,6 +418,8 @@ turn down for bad interview taste and dull work
         -   allocator
 
 **result-and-summary**
+
+May be turned down or hc locked.
 
 Job Experience
 --------------

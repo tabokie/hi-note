@@ -57,6 +57,9 @@ Theory
 -   2PC
 -   Paxos
 -   Raft
+    -   Election Process
+        -   election timeout: miss `AppendEntries` from leader
+    -   when add node
 -   ZAB
 -   Eventual Consistency
     -   Gossip (`Cassandra`, aka Anti-Entropy, @Efficient Reconciliation and Flow Control for Anti-Entropy Protocols, @Epidemic Algorithms for Replicated Database Maintenance)
@@ -227,6 +230,8 @@ Design
             -   0+1: mirror then stripe
                 -   virtual disk = mirrors
                 -   single disk failure means one virtual mirror failure
+    -   Cache
+        -   expiration: eventual consistency
 -   Communication
     -   UDP / TCP
     -   HTTP
@@ -243,6 +248,16 @@ Design
     -   distributed id
         -   `zookeeper`
     -   file synchronize
+    -   cache
+        -   expiration: eventual consistency
+        -   database then cache
+            -   possible reorder
+            -   waste of resource for write-intensive scenario
+        -   delete then database
+            -   double check: delete then update database finally expire cache after delay (if any)
+                -   delay is determined by propagation time
+                -   large for MySQL master-slave read-write cluster
+        -   database then delete
 -   Latency
     -   live video
         -   broadcast storm

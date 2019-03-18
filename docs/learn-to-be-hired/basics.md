@@ -9,6 +9,7 @@
             Synchronization](#process-communication-and-synchronization)
     -   [Network IO](#network-io)
     -   [Filesystem](#filesystem)
+    -   [Misc](#misc)
 
 Network
 -------
@@ -18,11 +19,13 @@ Network
 **HTTP connection**
 
 -   HTTP/0.9 short connection
-    -   each request = { DNS -\> three-step -\> transport -\> four-step
+    -   client-server model
+    -   close on each reqeust, request = { DNS -\> three-step -\> transport -\> four-step
         }
-    -   only `GET` request
--   HTTP/1.0 
-    -   durable connection
+    -   only `GET` request, used to transmit HTML text (ASCII protocol)
+-   HTTP/1.0
+    -   ASCII header + anytype content
+    -   durable connection proposal
         -   Connection Field = Keep-Alive / Close
         -   timeout = 5, max = 100
         -   Server
@@ -35,26 +38,40 @@ Network
                 timeout
             -   (Comet HTTP stream) continously send data to client
     -   command: `PUT`, `PATCH`, `HEAD`, `OPTIONS`, `DELETE`
--   HTTP/1.1 
+-   HTTP/1.1
+    -   durable conenction put into use
     -   pipelined connection
-        -   default Keep-Alice
+        -   default Keep-Alive
         -   Head-of-Line-Blocking(HOLB) problem
             -   multiple connection single queue
--   HTTP/2 
+    -   cache control
+-   HTTP/2
     -   multiplexing
         -   stem from Google SPDY
         -   streamID, allow disorder and priority queue
+    -   hpack to compress header
+    -   binary frame instead of text
+    -   server push
+    -   range request: `Chunked transfer-coding`
+-   HTTP/3: see `QUIC` in UDP section
 -   HTTP Cache <TODO>
 -   HTTPs
-    -   HTTP + SSL / TLS, port 443, server certificate A (private, public) and client random private key B
+    -   HTTP + SSL / TLS, port 443, server certificate A (private,
+        public) and client random private key B
     -   procedure
         -   server send certificate to client
-        -   client validate and encrypt random key to server (use A.public)
+        -   client validate and encrypt random key to server (use
+            A.public)
             -   validate certificate (against middle-man attack)
                 -   CA send private(hash(certificate)) as info
                 -   client check public(info) == hash(certificate)
         -   server get client key (use A.private)
         -   server send content (use B)
+-   HTTP Field
+    -   keep-alive
+    -   cache-control
+        -   no-cache
+        -   max-age
 
 **TCP**
 
@@ -105,6 +122,8 @@ Network
                     stream offset
                     -   retransmission will use new and higher packet
                         number to avoid ambiguity
+            -   drawback
+                -   use UDP, making NAT device hard to identify connection end point
         -   TFTP (trivial ftp)
             -   seq and ack and retransmission like TCP
             -   checksum sent ahead **Protocol**
@@ -165,6 +184,13 @@ Operating System & Linux
 
 ### Memory
 
+-   memory partition
+-   virtual memory
+-   memory allocation
+    -   allocation algorithm
+        -   buddy
+        -   slab
+    -   shared memory
 -   hardware - kernel - user
     -   copy
         -   `put_user`, `get_user`
@@ -180,22 +206,42 @@ Operating System & Linux
             -   send fid to socket buffer
         -   compact, cannot modify data
 -   virtual memory and page replacement
+    -   motivation for virtual memory, for address translation, optimizing address translation
     -   page and segment
         -   page is unit, while segment is chunk
-        -   logical address -> segmentation unit -> linear address -> paging unit -> physical address
+        -   logical address -\> segmentation unit -\> linear address -\>
+            paging unit -\> physical address
 -   program link
     -   dynamic versus static linkage
--   allocator
-    -   buddy algorithm
-    -   slab
--   memory partition
--   shared memory
-    -   implementation
 -   program
     -   bss segment: uninitialized, reset before program starts
     -   data segment: initialized data
     -   code / text segment
     -   heap + stack
+-   imported
+    -   physical frames is described by `page` structure
+    -   (physical) pages are divided into zones: DMA, NORMAL, HIGHMEM(not
+        directly mapped to kernel, deprecated in 64-bit)
+        -   DMA 16MB, NORMAL 16MB-896MB (taken by kernel)
+        -   64-bit do not need because kernel address can fully cover memory
+    -   virtual memory allocation
+        -   first 3 GB is user space
+        -   highest 1 GB is kernel space
+            -   -\>896 MB is direct mapped to physical memory
+            -   rest is vmapped
+    -   allocating physical memory
+        -   alloc\_page, and page\_address()
+        -   kmalloc (contiguous), and kfree
+        -   vmalloc (non-contiguous)
+            -   not for hardware device
+            -   needs setup page table, overhead
+            -   TLB thrashing ???
+            -   only for large chunk of memory
+    -   buddy system and slab
+    -   VMA
+        -   stored in mm\_struct
+        -   mmap linked list: used for iterate
+        -   mm\_rb rb-tree: used for searching
 
 ### Process
 
@@ -244,7 +290,7 @@ Operating System & Linux
             -   `task_struct* group_leader`
             -   `mm == NULL`
         -   pthread (user-thread)
-            -   `pthread_self -> pthread_id`: offset to task_struct
+            -   `pthread_self -> pthread_id`: offset to task\_struct
 -   Process Scheduling
 
 #### Process Communication and Synchronization
@@ -272,6 +318,75 @@ Operating System & Linux
     -   `Ctrl+C`
         -   SIGINT
         -   `signal(SIGINT, my_handler)` to register
+-   interrupt driven
+
+    -   interrupt types: hardware, error, user request
+        (software-generated trap)
+    -   interrupt vector, atomic execution to avoid lost interrupt
+    -   save address of interrupted instruction and transfer control to
+        interrupt service
+    -   handle by polling or vectored system
+
+    -   hardware interrupt: IO
+        -   sync and async
+        -   DMA: one interrupt per block
+    -   software interrupt: system call
+        -   api: Win32, POSIX, Java(for JVM)
+        -   parameter: register, pointer, stack
+        -   types: process control, file management, device management,
+            information, communication
+    -   top half and bottom half:
+        -   top is quick and can't block (less but critical work,
+            hardware related work)
+        -   bottom
+    -   -- Top Half --
+    -   hardware to kernel ask for interrupt handler in interrupt
+        context (atomic context)
+    -   handler is create as static function needs parameter (interrupt
+        number, data pointer)
+    -   handler is registered by driver (unregistered when driver
+        unload)
+        -   register needs interrupt number and handler
+    -   during interrupt, the number is masked so that same interrupt
+        can't be re-entered
+    -   interrupt context
+        -   no current pointer (invalid)
+        -   own interrupt stack
+    -   disable / enable interrupt from interrupt or process context
+        (the same as masking the bit vector)
+
+-   Syscall
+    -   software interrupt (exception) which signals kernel to execute the
+        exception handler
+    -   syscall number transferred to kernel by `eax` register, return
+        through it too. parameter passed by 5 registers and user space
+        pointer
+    -   process
+        -   save all: store number and register needed to stack
+        -   store task\_struct pointer to register
+        -   is number valid (\<NV\_syscalls), return -ENOSYS
+        -   call handler
+    -   system call context
+        -   process context, current point to user requester
+        -   sleepable
+            -   kernel functionality
+                -   e.g. page fault when read user data
+        -   preemptible
+            -   new task can preempt and execute the same system call
+            -   system call must be reentrant (by different process in this
+                context)
+        -   stronger than interrupt handler
+            -   ??? syscall is interrupt
+            -   software interrupt versus device interrupt ???
+            -   during system call, interrupt handler is first running in
+                interrupt context, then switch to kernel mode and with
+                process context
+            -   traditionally interrupt refers to hardware interrupt
+    -   from user perspective
+        -   libc function
+        -   software interrupt by `int 0x80`
+        -   system\_call() (look up syscall program)
+        -   ret\_from\_sys\_call()
 
 ### Network IO
 
@@ -313,3 +428,87 @@ Operating System & Linux
         -   block index stored in inode
     -   FAT
         -   linked list
+-   FCB
+    -   contains Basic Info, Control Info, Manipulating Info
+    -   new file struct every time call `open`, contains file pointer
+        information, which points to inode
+    -   share file when call `dup` or `fork`
+    -   file descriptor
+        -   POSIX require use min fid available
+        -   fid is process local
+        -   1024 at most maybe, can be changed
+-   super block -\> inode table -\> data
+-   dentry and inode
+    -   dentry: logical structure (name and directory)
+    -   inode: physical file structure
+-   soft link: new inode with relative directory information
+-   hard link: new dentry point to the same inode
+    -   modification will apply to the origin inode
+    -   inode has reference counter, will erase when counter == 0
+
+### Misc
+
+-   Shell
+    -   used in linux experiment
+        -   `tar`
+            -   `tar -x?f file` to extract file
+                -   ? can be empty(tar), z (tar.gz), j(tar.bz2),
+                    Z(tar.Z)
+            -   `tar -c?f target.tar files...`
+            -   `rar e` and `rar a`
+            -   `gzip -d` and `gzip`
+        -   `>>`, `>`, `tee`: redirect
+            -   `>>` is add mode
+            -   tee -, tee x.txt
+        -   `&`: run background; `|`: pipe, output as next input; `;`:
+            all
+        -   `uname -r`
+        -   `gedit /boot/grub/grub.cfg`: check boot options
+        -   `watch -n 1 -d ...`, `more`, `less`, `tail -f -n`,
+            `tail -F`(create when deleted), `tailf`(silent if not
+            growing)
+        -   `ln`
+        -   `~`
+        -   `!!`: show then redo last command, `[!ac1-3]`, `!-1`: last 1
+            command
+        -   `chmod` and `chown`
+        -   `ps` , `top`, `kill`
+        -   `touch`
+    -   mentioned in book
+        -   `here` document
+            -   \<\< !Marker! !Marker!
+        -   `exec`: return to parent, not caller
+            -   `exec < file`: redirect this process
+            -   `exec < /dev/tty`: reset to terminal
+            -   `exec 1>out 2>err`
+        -   `trap`: set handler
+            -   `trap 'rm -f tmp' INT`: or 2 for SIGINT
+        -   `insmod`, `rmmod`, `lsmod`
+        -   `mount` and `dd` for file system
+            -   `dd if=input of=output bs=size count=1`
+            -   `mount -t type -o loop from to`
+            -   `umount to`
+        -   `make install` for kernel
+            -   `make mrproper`, `make menuconfig`
+            -   kernel image: `linux/arch/i386/boot/bzImage`
+            -   kernel configuration: `/boot/config`
+-   Booting
+    -   process
+        -   BIOS
+            -   check device and initialize
+            -   read disk MBR and execute
+        -   MBR: Master Boot Record
+            -   bootloader
+            -   DPT(disk partition table)
+                -   at most 4 with at most one extension in it
+            -   Marker: 55AA AA55
+        -   image and ramdisk
+            -   initrd.img: ram as virtual disk
+        -   initialize system
+            -   /etc/rc.d/rc.sysinit
+    -   kernel programming
+        -   only gnu-c, no lib-c
+        -   no memory protection
+        -   no floating point, floating point traps and enter FP mode in
+            user mode
+        -   small and fixed-size stack

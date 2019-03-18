@@ -36,13 +36,18 @@ Database
             -   change-log by append-only file
         -   Internal Type: dynamic string
         -   Memory Management: virtual memory layer
-    -   Expiration
+    -   Event-driven and IO Multiplexing
+        -   redis use single thread to provide high-available service, Reactor model
+        -   events
+            -   file event: user socket
+            -   time event: snapshot, expiration
+    -   Expiration feature
         -   passive method: expire on access
         -   active method: periodically test random subset of expire set
     -   Pipelining
         -   Motivation
             -   reduce latency due to RTT
-            -   reduce network IO context switch\
+            -   reduce network IO context switch
     -   Transaction
         -   Procedure
             -   `MULTI` to start
@@ -65,6 +70,7 @@ Database
             -   full-connected with Gossip ping-pong
             -   `MOVED` reply to redirect client request
         -   master-slave to ensure availability
+        -   redis-sentinel to provide failover service
     -   Distributed Lock
         -   tradition
             -   lock key with expiration
@@ -97,20 +103,35 @@ Database
 
 ### MySQL
 
--   Transaction
-    -   Isolation
+-   Transaction (InnoDB)
+    -   Transaction Overview
+        -   undo log: tuple, for rollback, for mvcc
+        -   redo log: page, for recovery
+        -   update process
+            -   undo log = tuple delta, send to rollback segment
+            -   redo log of rollback segment
+            -   update tuple
+            -   redo log of update
+            -   mark dirty
+        -   commit process
+            -   flush redo log
+        -   recovery process
+            -   read page (possiblly with help of doublewrite)
+            -   exec redo log
+            -   exec undo log
+    -   Isolation (from strong to weak)
         -   `SERIALIZABLE`: update on same value is serialized
-            -   avoid A.select; B.insert.commit; A.select;
+            -   avoid A.select; B.insert.commit; A.select; (phantom read)
             -   **impl**: two-phase lock
         -   `REPEATABLE_READ` (default): read from origin state
-            -   avoid A.read; B.write.commit; A.read;
+            -   avoid A.read; B.write.commit; A.read; (non-repeatable read)
             -   **impl**
                 -   in fact is `SNAPSHOT` level, no phantom read
                 -   use read-view no read lock, write use **gap lock**
                 -   write skew problem, see
                     [system-design](./system-design.md)
         -   `READ_COMMITED`
-            -   avoid A.read; B.write; A.read;
+            -   avoid A.read; B.write; A.read; (dirty read)
             -   **impl**: command-level read-view, only record lock
         -   `READ_UNCOMMITED`
     -   MVCC
@@ -123,6 +144,21 @@ Database
             -   low\_limit: unborned transaction
             -   up\_limit: finished transaction
             -   ids: uncommitted transaction
+    -   Redo Logging
+        -   Mini Transaction = lock + write (data and redo log) + commit (flush log and unlock)
+        -   Redo Log File
+            -   circular array with fixed-len files = FileHeader + 4 Blocks [BlockHeader + Content + BlockTrailer]
+            -   lock-free append
+                -   sequence number determines write area in log buffer
+                -   background thread refreshing updates in log buffer to page cache
+            -   312 byte unit, no need for doublewrite
+    -   Double Write: avoid partial write
+        -   sequential doublewrite buffer (2 MB)
+            -   allocation: alloc(32 page + 128 page) to exaust fragment array first
+        -   grouped write
+            -   reduce `fsync()` called
+    -   Lock and Deadlock
+        -   
 -   Storage Engine
     -   MyISAM: good for analysis
         -   index: 非聚簇索引, store pointer at B+ leaf
@@ -150,6 +186,23 @@ Database
 -   Sharding
     -   read / write partition
     -   horizontal partition
+        -   key-based
+        -   range-based
+        -   use external table as mapping function: flexibility
+-   Replication ([link](https://zhuanlan.zhihu.com/p/35471971))
+    -   motivation: read / write request seperation
+    -   binlog
+        -   log format
+            -   row-level
+                -   large amount
+            -   statement level
+                -   needs context
+                -   randomness: time, trigger
+        -   log relay: by file offset
+    -   GTID
+        -   format: `source_server: transaction_id`
+-   Resource
+    -   [Jeremy Cole's blog](https://blog.jcole.us/innodb/)
 
 ### Serialize Protocol
 

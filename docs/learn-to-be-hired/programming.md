@@ -349,7 +349,7 @@ Java
         -   `new WeakReference`
         -   `System.gc()`
     -   Phantom Reference
-        -   `new PhantomReference(ref, new ReferenceQueue<String>())`
+        -   `new PhantomReference(ref, new ReferenceQueue<Object>())`
         -   denote that object is about to be collected
     -   `WeakHashMap`: key as weak reference, retire k-v when key is
         retired
@@ -711,6 +711,7 @@ Java
 -   ClassLoader
     -   Load Timing
         -   new instance or use static member
+            -   inner class's lazy initialization
         -   reflection
         -   initialize child class
         -   marked as booting class (java Boot)
@@ -725,12 +726,19 @@ Java
         -   App ClassLoader: classpath
         -   parents delegation
             -   pass request to parent ClassLoader
-            -   benifit: uniqueness, avoid error for type information
+            -   motivation 
+                -   uniqueness, avoid error for type information
+                -   avoid redundant loading
             -   destory parent delegation: bypass parent loader and load
                 customized class with AppClassLoader
-                -   how?
+                -   `loadClass`: override parent delegation with direct call to `findClass`
+                -   `findClass`: call `defineClass` to convert bytecode to `Class` instance
+            -   `contextClassLoader`
+                -   call by `Thread.currentThread().getContextClassLoader().loadClass(n)`
+                -   share `AppClassLoader` by default
         -   exception
             -   `ClassNotFoundException`: load by string, but not found
+                -    throw when load an intrinsic class, use `Class.forName` for that use
             -   `NoClassDefFound`: explicitly use class but miss
                 `.class` file
     -   Loading Procedure
@@ -972,6 +980,8 @@ Parallel Programming
 
 ### Lock and Model
 
+-   Naive Mutex
+    -   Peterson
 -   Lock
     -   SpinLock: `while(!lock) {}`
         -   TAS (test and set): one CAS
@@ -1015,7 +1025,12 @@ Parallel Programming
         -   `epoll`
         -   `thread.wait()`
             -   `notify_one`
--   DeadLock
+-   DeadLock 
+    -   formal spec
+        -   mutual exclusion
+        -   hold and wait
+        -   no preemption
+        -   circular wait
 -   Procuder - Customer
 -   Performance
 
@@ -1030,3 +1045,4 @@ Parallel Programming
         -   lamport fifo
         -   linux kfifo
             -   two-power size to avoid modular
+-   Debug parallel program
