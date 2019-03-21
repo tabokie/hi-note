@@ -1005,7 +1005,7 @@ Parallel Programming
                 -   CAS first
     -   ReadWriteLock
         -   rlock: lock(r); r++; if (r == 1) lock(w); // only one locks
-            wlock: lock(w);
+        -   wlock: lock(w);
         -   SequenceLock: resolve write exhaustion
             -   rlock: if (seq is even) read; if (seq != old seq) redo;
                 wlock: lock(mu); seq ++;
