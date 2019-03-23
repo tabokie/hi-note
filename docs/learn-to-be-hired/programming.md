@@ -1008,7 +1008,7 @@ Parallel Programming
         -   wlock: lock(w);
         -   SequenceLock: resolve write exhaustion
             -   rlock: if (seq is even) read; if (seq != old seq) redo;
-                wlock: lock(mu); seq ++;
+            -   wlock: lock(mu); seq ++;
     -   Lock implementation
         -   CAS + OS
             -   `Futex`: fast userspace mutex

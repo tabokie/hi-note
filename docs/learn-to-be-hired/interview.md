@@ -290,6 +290,40 @@ After communicating with interviewer, transfer to OceanBase.
 
 #### Antfin OceanBase
 
+(19-03)
+
+**first-interview (1 hour)**
+
+-   project: Database
+    -   B-flow tree
+        -   followup: LSM-tree
+            -   why called level: compression
+            -   why leveled: compression
+        -   followp: OceanBase
+    -   record serialization and disk write
+    -   write disk timing
+        -   commit
+    -   write disk before commit (memory replacement)
+        -   page version number
+        -   followup
+            -   new transaction with bigger version needs to persist
+    -   MySQL log
+        -   use log to solve that problem
+        -   if memory is large, readback page and rollback
+-   project: coplus
+    -   coroutine merits
+    -   coroutine implementation
+        -   register: PC, temporary variable
+        -   stack: Windows' help
+    -   wait-free queue
+-   c++
+    -   virtual and abstract virtual
+        -   mistake as virtual inheritance, fuck me
+    -   virtual dtor
+-   coding
+    -   `segment "seg me'n t"more 'en d'`
+    -   test case
+
 ### Tencent
 
 #### Keen Security Lab
@@ -330,6 +364,43 @@ missing, mainly about CAS and memory.
 **result**
 
 turn down for bad interview taste and dull work.
+
+#### WXG Search Platform
+
+(19-03-19)
+
+**first-interview**
+
+-   coding
+    -   `add(string, string, int base)`
+        -   `delete NULL`
+        -   `buffer[length_] = '\0'`
+    -   `printRotateArray(int)`
+    -   `class String`
+    -   `Add(BigObject)`
+        -   `unique_ptr`
+        -   `LinkedVector` and `sort(ptrs)`
+-   project
+    -   coroutine library
+        -   implementation
+        -   merits
+            -   IO intensive and CPU intensive
+    -   database
+        -   index
+            -   explain `id, name, age`
+            -   LSMT merits
+            -   reflection
+                -   ORM
+-   intelligence
+    -   3L and 5L to 4L
+    -   1 heavy in 8: 2 times
+-   question
+    -   why WXG
+        -   search and distributed storage
+        -   self-dev
+    -   intern to formal
+        -   test before 8.30
+    -   spoiler: group leader, manager, cross-interview, hr interview
 
 ### Netease
 
@@ -417,9 +488,9 @@ turn down for bad interview taste and dull work.
         -   operating system
         -   allocator
 
-**result-and-summary**
+**hr-interview (after a week)**
 
-May be turned down or hc locked.
+**result-and-summary**
 
 Job Experience
 --------------
@@ -475,6 +546,7 @@ Job Experience
             [github](https://github.com/wxhwang/UnorderedFileIndex)
         -   2019-03: find first non-repeated word in 10 GB file
             [github](https://github.com/Qiwc/FirstNoReapting)
+    -   my assignment: persistent key-value server
 
 #### Netease
 
