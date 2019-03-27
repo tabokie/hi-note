@@ -61,3 +61,17 @@
         -   [Qix](https://github.com/ty4z2008/Qix): Machine
             Learning、Deep Learning、PostgreSQL、Distributed
             System、Node.Js、Golang
+
+
+-   https://predb.me/?cats=movies-hd
+-   https://limingji.gitbooks.io/go_notes/content/
+-   https://swanspouse.github.io/
+-   https://zhuanlan.zhihu.com/p/25042028
+-   http://hjwblog.com/
+-   https://zhuanlan.zhihu.com/p/41606961
+-   http://spiritsaway.info/
+-   https://preshing.com/
+-   http://codeworm96.me/
+-   https://www.superstition.cn/
+-   https://blog.yangl1996.com/
+-   http://cuitianyi.com/
