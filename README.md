@@ -19,3 +19,4 @@ Before hi-note is ready for use, I put my on-going notes in Markdown here.
 * [Learn-to-be-Hired](./docs/learn-to-be-hired)
 * [Learn-Language](./docs/learn-language)
 * [Code-Reading](./docs/code-reading)
+* [Database-and-Distributed-System](./docs/db-and-sys)

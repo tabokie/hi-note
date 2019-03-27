@@ -10,6 +10,8 @@ Database
 
 ### Redis
 
+Redis内存数据库的内存指的是共享内存么
+
 -   Features
     -   complex data types built upon key-value engine
     -   in-memory but persistent
@@ -30,6 +32,14 @@ Database
     -   Hash
         -   set, getall, incrby, keys
 -   Tech Notes
+    -   Cache Eviction [link](http://antirez.com/news/109)
+        -   LRU
+            -   ramdom sampling
+            -   ramdom sampling with pooling
+        -   LFU
+            -   logarithmic counter to prevent overflow
+            -   maintain last-access timestamp to halve the counter
+            -   new key has count of 5 to survive
     -   Storage
         -   Eventual Persistency
             -   snapshot by daemon process
@@ -158,7 +168,9 @@ Database
         -   grouped write
             -   reduce `fsync()` called
     -   Lock and Deadlock
-        -   
+        -   record lock
+            -   implemented by primary index
+            -   only query with primary index in use will trigger record lock, or fallback to table lock
 -   Storage Engine
     -   MyISAM: good for analysis
         -   index: 非聚簇索引, store pointer at B+ leaf

@@ -94,6 +94,8 @@ Network
         -   server will maintain un-acked list and resend using sack
             info
     -   dsack
+-   socket
+    -   `accept`: first handshake? <TODO>
 
 **UDP**
 
@@ -492,6 +494,11 @@ Operating System & Linux
             -   `make mrproper`, `make menuconfig`
             -   kernel image: `linux/arch/i386/boot/bzImage`
             -   kernel configuration: `/boot/config`
+    -   interview
+        -   Linux的cpu 100怎么排查，top jstack，日志，gui工具
+        -   Linux大文件怎么查某一行的内容
+        -   查看进程状态ps，查看cpu状态 top。查看占用端口的进程号netstat grep
+        -   代码中遇到进程阻塞，进程僵死，内存泄漏等情况怎么排查。通过ps查询状态，分析dump文件等方式排查
 -   Booting
     -   process
         -   BIOS

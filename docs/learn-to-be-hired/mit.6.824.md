@@ -15,10 +15,10 @@ Lecture 1
 ---------
 
 -   Why distributed?
--   to connect physically separate entities
--   to achieve security via isolation
--   to tolerate faults via replication
--   to scale up throughput via parallel CPUs/mem/disk/net
+    -   to connect physically separate entities
+    -   to achieve security via isolation
+    -   to tolerate faults via replication
+    -   to scale up throughput via parallel CPUs/mem/disk/net
 -   Topics
     -   Implementation
     -   Performance

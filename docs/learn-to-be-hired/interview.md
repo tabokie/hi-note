@@ -5,20 +5,25 @@
         -   [sBase Database](#sbase-database)
         -   [SpecTM transactional memory](#spectm-transactional-memory)
         -   [Crowd](#crowd)
+        -   [Portal-DB](#portal-db)
+    -   [PingCAP](#pingcap)
+        -   [Infra Intern](#infra-intern)
     -   [Bytedance](#bytedance)
         -   [Backend Develop Intern at
             EE](#backend-develop-intern-at-ee)
     -   [Alibaba](#alibaba)
         -   [Antfin Big Data Platform
             Intern](#antfin-big-data-platform-intern)
+        -   [Antfin OceanBase](#antfin-oceanbase)
     -   [Tencent](#tencent)
         -   [Keen Security Lab](#keen-security-lab)
-        -   [MySQL](#mysql)
+        -   [MySQL Group](#mysql-group)
+        -   [WXG Search Platform](#wxg-search-platform)
     -   [Netease](#netease)
         -   [LeiHuo Game Engine Intern](#leihuo-game-engine-intern)
 -   [Job Experience](#job-experience)
     -   [Company Overview](#company-overview)
-        -   [PingCAP](#pingcap)
+        -   [PingCAP](#pingcap-1)
         -   [Netease](#netease-1)
         -   [Bytedance](#bytedance-1)
         -   [Tencent](#tencent-1)
@@ -124,6 +129,13 @@ Interview Record
         -   concurrent priority queue
             -   skiplist-based
             -   optimize CAS operation by `delete` flag
+
+#### Portal-DB
+
+-   hash-trie
+    -   endian inpair comparison
+-   trick
+    -   rusty borrow
 
 ### PingCAP
 
@@ -324,6 +336,27 @@ After communicating with interviewer, transfer to OceanBase.
     -   `segment "seg me'n t"more 'en d'`
     -   test case
 
+**second-interview (YANG Chuanhui)**
+
+-   project:sBase
+    -   B-Flow
+-   project: lab
+    -   in-memory transaction log
+-   project: coplus
+    -   coroutine
+-   project: Crowd
+-   heap implementation
+    -   linked list
+    -   array
+-   lru cache
+    -   sampling, RR
+    -   doubly-linked list
+    -   thread safety?
+        -   circular queue
+-   about yourself
+    -   plan
+    -   merit and demerit
+
 ### Tencent
 
 #### Keen Security Lab
@@ -365,7 +398,7 @@ missing, mainly about CAS and memory.
 
 turn down for bad interview taste and dull work.
 
-#### WXG Search Platform
+#### WXG Search and Recommendation
 
 (19-03-19)
 
@@ -401,6 +434,37 @@ turn down for bad interview taste and dull work.
     -   intern to formal
         -   test before 8.30
     -   spoiler: group leader, manager, cross-interview, hr interview
+
+(19-03-25)
+
+**second-interview**
+
+-   start programming
+    -   new explosure: GPU
+    -   challenge: no GPU product, workload optimization
+-   sBase
+    -   engine
+        -   index stores file pointer
+        -   B-Flow
+    -   parallel
+-   portal-db
+    -   network: Windows multiplexing
+    -   persist: snapshot + bin-log
+        -   bin-log commit
+-   Linux [X]
+-   STL [X]
+-   coplus
+    -   why not use libco
+        -   try application, not fundamental infra
+-   Hadoop [X]
+-   Java, Python
+-   hobby
+-   location
+
+**result-and-summary**
+
+-   worst interview experience so far (19-03)
+    -   self-righteous
 
 ### Netease
 
@@ -491,6 +555,8 @@ turn down for bad interview taste and dull work.
 **hr-interview (after a week)**
 
 **result-and-summary**
+
+-   offer after 1 week, only 6000 per month ;(
 
 Job Experience
 --------------

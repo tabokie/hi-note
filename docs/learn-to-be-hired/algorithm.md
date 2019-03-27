@@ -186,6 +186,13 @@ Algorithm
             -   if pointed to `cur`, restore
             -   else point to `cur` and descend
     -   Height-balanced Tree
+-   Use Case
+    -   LRU / LRU
+        -   random sampling
+            -   see [`Redis`](./infra.md#redis)
+        -   doubly-linked list
+        -   lru-k
+            -   history queue and priority queue
 
 #### Dynamic Programming
 
@@ -257,7 +264,8 @@ Algorithm
 -   Statistic
     -   Median
         -   two-heap
--   Union and Intersection
+-   Union and Intersection <TODO>
+        -   hash on small set, traverse big set
 -   Data Container
     -   fifo
 -   Sort
