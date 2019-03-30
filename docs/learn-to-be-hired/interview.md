@@ -18,7 +18,8 @@
     -   [Tencent](#tencent)
         -   [Keen Security Lab](#keen-security-lab)
         -   [MySQL Group](#mysql-group)
-        -   [WXG Search Platform](#wxg-search-platform)
+        -   [WXG Search and
+            Recommendation](#wxg-search-and-recommendation)
     -   [Netease](#netease)
         -   [LeiHuo Game Engine Intern](#leihuo-game-engine-intern)
 -   [Job Experience](#job-experience)
@@ -31,7 +32,8 @@
         -   [Hulu](#hulu)
         -   [Google](#google)
         -   [Microsoft](#microsoft)
-    -   [Build Open-Source Experience](#build-open-source-experience)
+    -   [Experience Building for Tech
+        Company](#experience-building-for-tech-company)
     -   [Transfer to USA](#transfer-to-usa)
 
 Interview Record
@@ -133,8 +135,15 @@ Interview Record
 #### Portal-DB
 
 -   hash-trie
-    -   endian inpair comparison
+    -   merit
+        -   fixed-length key prevent booming nodes
+        -   combine fast query with sorted scan
+        -   fast comparison and fast hash
+    -   demerit (so far)
+        -   inconsistent scan
+        -   cold startup
 -   trick
+    -   endian inpair comparison
     -   rusty borrow
 
 ### PingCAP
@@ -142,6 +151,83 @@ Interview Record
 #### Infra Intern
 
 **hr-and-project**
+
+    KV Server
+    编写一个 C/S Demo。服务器上存储有一个有序的 Key-Value 集合（类似于 c++ 中的 std::map<string, string>）。要求：
+    需要实现 Get，Put，Delete 和 Scan 接口
+    Key 固定 8 字节，value 固定 256 字节
+    （加分项）需要能对内存数据进行持久化保存，重启之后数据不丢失
+     
+    提示：
+    1. 编程语言请使用 c/c++/go/rust。
+    2. 设计协议时要考虑到返回的数据量可能会很大。
+    3. 注意代码风格，添加必要的单元测试和文档。
+    4. 注意异常处理，尝试优化性能。
+
+**first-interview (mentor)**
+
+-   project: sBase, portal-db
+-   process and thread and coroutine
+-   algorithm
+    -   two stacks as a fifo
+    -   quicksort and time complexity
+-   Q&A
+    -   TiKV with Rust and C++ (rocksdb)
+
+**second-interview (moved-ahead, He)**
+
+-   portal-db
+    -   key = 8
+        -   reason
+            -   limited space
+            -   less hash and comparison
+    -   benchmark
+        -   segment and mixed
+        -   single and multi-thread
+        -   mock of KV
+    -   debug: Linux server running slow
+        -   log + pattern -\> repete
+        -   specific reason
+            -   disk file
+            -   deletion
+-   heap
+    -   operation
+    -   top-k
+    -   top-k-freq
+        -   hash then heap
+        -   use segmented hash and cache
+        -   incremental update when repeatedly call
+-   set
+    -   operation: add, del, in, pick
+    -   auxiliary vector pointed to hash table slot
+        -   deletion
+            -   rejection sampling with periodically resize
+            -   stack-like with top, use swap to reduce resize
+-   sBase
+    -   B-Flow
+        -   followup: LSMT
+            -   scan operation
+    -   SQL
+    -   index: B/B+
+    -   transaction: possible phenomenon
+-   Rust / C++
+-   distributed algorithm: Raft
+    -   majority
+    -   leader with 2 voter and 4 committer
+    -   leader with 4 voter and 2 committer
+        -   less availability and same consistency ?
+-   department of TiKV
+    -   Open-Source Raft (he in?)
+    -   ACID transaction
+    -   low-level engine
+    -   computation push-down
+-   Q&A: about your firm
+    -   company's future has little influence
+    -   freedom and flexibility
+    -   better for improvement and realization because everyone is
+        novice
+
+**third-interview (USA-pre-facebook)**
 
 ### Bytedance
 
@@ -336,7 +422,7 @@ After communicating with interviewer, transfer to OceanBase.
     -   `segment "seg me'n t"more 'en d'`
     -   test case
 
-**second-interview (YANG Chuanhui)**
+**second-interview (YANG Chuanhui P10)**
 
 -   project:sBase
     -   B-Flow
@@ -356,6 +442,29 @@ After communicating with interviewer, transfer to OceanBase.
 -   about yourself
     -   plan
     -   merit and demerit
+
+**hr-interview**
+
+-   choice of DB
+-   your edge against master
+-   Q&A
+    -   compare with PingCAP
+        -   not open-source, but independent-product
+        -   good DB takes years, not in a rush
+        -   \~ Oracle, \~ Huawei Gauss
+        -   used in bank, not Mobi of PingCAP, reliability
+        -   best minds in DB area
+    -   suggestion
+        -   do not underestimate the hardwork of DB
+        -   be careful and detailed
+    -   wait for 4.10, the first batch of Offers
+
+**result-and-summary**
+
+-   best interview experience among big firms
+    -   nicely touch deep, an impression of cool professionals
+    -   all on phone, no pressure
+    -   relatively quick response
 
 ### Tencent
 
@@ -451,20 +560,36 @@ turn down for bad interview taste and dull work.
     -   network: Windows multiplexing
     -   persist: snapshot + bin-log
         -   bin-log commit
--   Linux [X]
--   STL [X]
+-   Linux \[X\]
+-   STL \[X\]
 -   coplus
     -   why not use libco
         -   try application, not fundamental infra
--   Hadoop [X]
+-   Hadoop \[X\]
 -   Java, Python
 -   hobby
 -   location
+
+**hr-interview**
+
+-   study with practice
+    -   demate your own argument
+-   merit and demerit
+-   family
+-   parent influence
+-   hobby
+-   success and failure in your college year
+-   what if you start over your college life
 
 **result-and-summary**
 
 -   worst interview experience so far (19-03)
     -   self-righteous
+-   hr interview is so\~ deep
+-   offer in a week
+    -   formal letter of commitment needed
+    -   5000 with 2000 housing per month plus 2000 traffic
+        (off-province)
 
 ### Netease
 
@@ -556,7 +681,7 @@ turn down for bad interview taste and dull work.
 
 **result-and-summary**
 
--   offer after 1 week, only 6000 per month ;(
+-   offer after 1 week, 6000 per month ;(
 
 Job Experience
 --------------
@@ -567,7 +692,7 @@ Job Experience
 
 -   job
     -   hr-interview =\> assignment =\> tech-interview
-    -   history assignment
+    -   history assignment (intern-mixed)
         -   2018: 利用 kubectl plugin 机制实现一个插件，用于 debug
             任意一个 pod 里的容器，达到 kubectl exec 的使用体验.
             [github](https://github.com/aylei/kubectl-debug)
@@ -612,14 +737,14 @@ Job Experience
             [github](https://github.com/wxhwang/UnorderedFileIndex)
         -   2019-03: find first non-repeated word in 10 GB file
             [github](https://github.com/Qiwc/FirstNoReapting)
-    -   my assignment: persistent key-value server
+    -   my assignment: persistent key-value server (19-03)
 
 #### Netease
 
 -   job
     -   strongly focus on project
     -   late interview mail
-    -   bad interview
+    -   bad interview (Leihuo) : bad prep, long pauses
 
 #### Bytedance
 
@@ -632,6 +757,7 @@ Job Experience
 -   job
     -   awful experience
     -   wrong department holds on to your resume
+    -   hr interview and offer call are extremely formal and detailed
 
 #### Alibaba
 
@@ -649,7 +775,7 @@ Job Experience
         -   one referral at a time
         -   includes cross interview
     -   freezing time more than 0.5 year
-    -   only on-phone interview, set your phone rings!
+    -   mostly on-phone interview, set your phone rings!
 
 #### Hulu
 
@@ -664,28 +790,24 @@ Job Experience
 
 #### Microsoft
 
--   ATC
+-   STCA: easy
 -   MSRA
 
-### Build Open-Source Experience
+### Experience Building for Tech Company
 
--   Participate in Open-Source Project
-    -   bug report
-        -   format
-        -   compatibility bug
-    -   bug fix
-    -   feature committer
--   Google Summer of Code
-    -   organization selects
-        -   3D Geometry & Rendering
-            -   new gui
-            -   surface reconstruction
-            -   function extension
-        -   Rust
-        -   Go
-    -   requirement
-        -   participation
-        -   proposal
+-   Source Code Study
+-   Hands-On Industrial Product
+-   Open-Source
+    -   Participate in Open-Source Project
+        -   bug report
+            -   format
+            -   compatibility bug
+        -   bug fix
+        -   feature committer
+    -   Google Summer of Code
+        -   requirements
+            -   participation
+            -   proposal
 
 ### Transfer to USA
 

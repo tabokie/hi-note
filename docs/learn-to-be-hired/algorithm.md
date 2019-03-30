@@ -11,6 +11,7 @@
     -   [Bugs](#bugs)
     -   [Optimization](#optimization)
     -   [Test Case](#test-case)
+    -   [Misc Insights](#misc-insights)
 
 Algorithm
 ---------
@@ -187,7 +188,7 @@ Algorithm
             -   else point to `cur` and descend
     -   Height-balanced Tree
 -   Use Case
-    -   LRU / LRU
+    -   LRU / LFU
         -   random sampling
             -   see [`Redis`](./infra.md#redis)
         -   doubly-linked list
@@ -264,8 +265,7 @@ Algorithm
 -   Statistic
     -   Median
         -   two-heap
--   Union and Intersection <TODO>
-        -   hash on small set, traverse big set
+-   Union and Intersection <TODO> - hash on small set, traverse big set
 -   Data Container
     -   fifo
 -   Sort

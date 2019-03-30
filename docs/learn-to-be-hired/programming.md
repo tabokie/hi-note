@@ -1,6 +1,7 @@
 -   [Language](#language)
     -   [C++](#c)
-        -   [Underneath](#underneath)
+        -   [Compilation, Binary and
+            Assembly](#compilation-binary-and-assembly)
         -   [Memory](#memory)
         -   [Polymorphism](#polymorphism)
         -   [Multi-Thread](#multi-thread)
@@ -16,7 +17,6 @@
         -   [IO](#io)
         -   [RTTI and Reflection](#rtti-and-reflection)
         -   [JVM](#jvm)
-        -   [Industry](#industry)
 -   [Programming Practice](#programming-practice)
     -   [Debugging and Optimization](#debugging-and-optimization)
     -   [Parallel Programming](#parallel-programming-1)
@@ -24,7 +24,6 @@
         -   [Paradigm](#paradigm)
         -   [Memory](#memory-1)
         -   [Lock and Model](#lock-and-model)
-        -   [Lock Free](#lock-free)
         -   [Concurrent Util](#concurrent-util)
 
 Language
@@ -78,7 +77,8 @@ C++
         -   move constructor and copy constructor
         -   forward reference (universal reference): `T&&`
             -   reference collapsing
-                -   `template emplace_back(T&&)` \> `push_back(item_type&&)`
+                -   `template emplace_back(T&&)` \>
+                    `push_back(item_type&&)`
     -   copy elision (RVO / NRVO) to optimize return by value
 -   allocation
     -   `malloc`: heap
@@ -116,8 +116,8 @@ C++
                 -   **copy dtor**
                     -   `p = shared_ptr<Base>( make_shared<Derived>() )`
         -   `make_shared` \> `shared_ptr`
-            -   target and ref info will be stored in one contiguous block,
-                cut down alloc times
+            -   target and ref info will be stored in one contiguous
+                block, cut down alloc times
                 -   drawback: weak\_ref will in essence act like strong
                     reference, because weak ref info is stored with obj
             -   exception safety
@@ -126,6 +126,7 @@ C++
                     // exception
                     p = shared_ptr(_p);
                     ```
+
             -   raw pointer reuse:
                 -   ``` {.cpp}
                     p = new Obj();
@@ -181,7 +182,8 @@ C++
     -   case A: different parameter
     -   case B: non-virtual override
 
--   RTTI
+-   RTTI: runtime type
+    -   `typeid` with `sizeof` (compile-time)
 -   typecast
     -   `static_cast`: static resolve type conversion
     -   `reinterpret_cast`: pointer, integer
@@ -212,6 +214,8 @@ C++
         -   function
 -   two-phase name lookup
 -   SFINAE (substitution failure is not an error)
+    -   `enable_if`
+    -   `void_t`
 -   new standard
     -   varidic template
     -   auto type deduction
@@ -511,7 +515,8 @@ Java
     -   outer manip
         -   `run()`, `start()`
         -   `interrupt()`
-            -   terminate if thread is in blocking / waiting state, throws `InterruptedException`
+            -   terminate if thread is in blocking / waiting state,
+                throws `InterruptedException`
     -   inner manip
         -   `this.interrupted() -> boolean`
         -   `Thread.sleep(mili)`
@@ -520,26 +525,35 @@ Java
         -   new
         -   runnable
         -   blocking: wait for mutex
-        -   waiting: `Object.wait()`, `join()`, `LockSupport.park()`->`LockSupport.unpart(Thread)`
-        -   timed waiting: `sleep`, `wait(mili)`, `join(mili)`, `parkUntil`
+        -   waiting: `Object.wait()`, `join()`,
+            `LockSupport.park()`-\>`LockSupport.unpart(Thread)`
+        -   timed waiting: `sleep`, `wait(mili)`, `join(mili)`,
+            `parkUntil`
         -   terminated
     -   ThreadLocal
-        -   internal: `ThreadLocalMap m = getMap(Thread.getCurrentThread())`
+        -   internal:
+            `ThreadLocalMap m = getMap(Thread.getCurrentThread())`
         -   `new ThreadLocal<Object>() { public Object initialValue() }`
     -   ThreadPool
-        -   ThreadPoolExecutor / Executor -> ExecutorService
-            -  `Executors` have no configuration port, TaskQueue::Size = INT_MAX, will cause OOM
-                -   `FixedThreadPool`, `SingleThreadExecutor`, `CachedThreadPool`, `ScheduledThreadPool`(timer)
+        -   ThreadPoolExecutor / Executor -\> ExecutorService
+            -   `Executors` have no configuration port, TaskQueue::Size
+                = INT\_MAX, will cause OOM
+                -   `FixedThreadPool`, `SingleThreadExecutor`,
+                    `CachedThreadPool`, `ScheduledThreadPool`(timer)
             -   `ThreadPoolExecutor(corePoolSize, maxPoolSize, workQueue, keepAliveTime)`
                 -   increasing policy
                     -   if not reach corePoolSize: add Thread
                     -   if workQueue isn't full: add to workQueue
                     -   if not reach maxPoolSize: add Thread
-                    -   if more than corePoolSize and one Thread exceeds keepAliveTime: abandon and shrink
+                    -   if more than corePoolSize and one Thread exceeds
+                        keepAliveTime: abandon and shrink
                 -   reject policy: `RejectedExecutionHandler`
-                    -   if reach maxPoolSize and workQueue full, call rejectedHandle
-                    -   `AbortPolicy` throws `RejectedExecutionException`
-                    -   `CallerRunsPolicy` run in current thread if executor is alive (coroutine)
+                    -   if reach maxPoolSize and workQueue full, call
+                        rejectedHandle
+                    -   `AbortPolicy` throws
+                        `RejectedExecutionException`
+                    -   `CallerRunsPolicy` run in current thread if
+                        executor is alive (coroutine)
                     -   `DiscardOldestPolicy`
                     -   `DiscardPolicy`
             -   shutdown
@@ -548,7 +562,7 @@ Java
         -   Pool:: `execute`, `submit -> FutureTask`
 -   Synchronization
     -   `Object.wait()`, `Object.notify()`
-    -   `lock.newCondition()` -> Condition -> `await()`, `signal()`
+    -   `lock.newCondition()` -\> Condition -\> `await()`, `signal()`
     -   Lock
         -   `synchronized`
             -   Object: `monitorenter` & `monitorexit` instruction
@@ -569,8 +583,8 @@ Java
             -   `getState`, `setState`
             -   `boolean compareAndSetState(int expect, int update)`
         -   interface function
-            -   `tryAcquire(int)`, release 
-            -   `tryAcquireShared(int)`, release 
+            -   `tryAcquire(int)`, release
+            -   `tryAcquireShared(int)`, release
     -   Semaphore
     -   CountDownLatch
     -   Cyclic Barrier
@@ -726,19 +740,23 @@ Java
         -   App ClassLoader: classpath
         -   parents delegation
             -   pass request to parent ClassLoader
-            -   motivation 
+            -   motivation
                 -   uniqueness, avoid error for type information
                 -   avoid redundant loading
             -   destory parent delegation: bypass parent loader and load
                 customized class with AppClassLoader
-                -   `loadClass`: override parent delegation with direct call to `findClass`
-                -   `findClass`: call `defineClass` to convert bytecode to `Class` instance
+                -   `loadClass`: override parent delegation with direct
+                    call to `findClass`
+                -   `findClass`: call `defineClass` to convert bytecode
+                    to `Class` instance
             -   `contextClassLoader`
-                -   call by `Thread.currentThread().getContextClassLoader().loadClass(n)`
+                -   call by
+                    `Thread.currentThread().getContextClassLoader().loadClass(n)`
                 -   share `AppClassLoader` by default
         -   exception
             -   `ClassNotFoundException`: load by string, but not found
-                -    throw when load an intrinsic class, use `Class.forName` for that use
+                -   throw when load an intrinsic class, use
+                    `Class.forName` for that use
             -   `NoClassDefFound`: explicitly use class but miss
                 `.class` file
     -   Loading Procedure
@@ -957,7 +975,7 @@ Parallel Programming
             -   block to wait for logical event
             -   or asynchronous callback which require additional state
                 -   state in closure
-        -   lightweight switch: frequency and dataload and userspace 
+        -   lightweight switch: frequency and dataload and userspace
     -   Application
         -   Syntex Parser: `while(true): readToken(); go Parse();`
         -   State Machine
@@ -1025,7 +1043,7 @@ Parallel Programming
         -   `epoll`
         -   `thread.wait()`
             -   `notify_one`
--   DeadLock 
+-   DeadLock
     -   formal spec
         -   mutual exclusion
         -   hold and wait

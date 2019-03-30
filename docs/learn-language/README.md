@@ -74,6 +74,38 @@ C++
         -   a\_thread.get\_id()
         -   std::this\_thread::get\_id()
 
+### Undefined Behaviour
+
+-   strict aliasing
+    -   phenomenon
+        -   in`O3` mode, value of variable comes directly from last logical reference 
+            -   ```c++
+                int a;
+                int f(float *b)
+                {
+                    a = 1;
+                    *b = 0;
+                    return a;
+                }
+                int main()
+                {
+                    printf("%d\n", f((float*)&a));
+                    return 0;
+                }
+                ```
+    -   allowed aliasing
+        -   same type with modifier
+        -   union
+        -   `char*` family pointer
+        -   derived class with base class
+-   modifying one variable more than once between two sequence points
+    -   `x = x++`
+-   function paremeter evaluation
+-   signed interger overflow is ub, unsigned is well-defined
+
+### functional
+-   `target()` to restore to C-like function pointer
+
 Golang
 ------
 

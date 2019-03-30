@@ -20,8 +20,8 @@ Network
 
 -   HTTP/0.9 short connection
     -   client-server model
-    -   close on each reqeust, request = { DNS -\> three-step -\> transport -\> four-step
-        }
+    -   close on each reqeust, request = { DNS -\> three-step -\>
+        transport -\> four-step }
     -   only `GET` request, used to transmit HTML text (ASCII protocol)
 -   HTTP/1.0
     -   ASCII header + anytype content
@@ -125,7 +125,8 @@ Network
                     -   retransmission will use new and higher packet
                         number to avoid ambiguity
             -   drawback
-                -   use UDP, making NAT device hard to identify connection end point
+                -   use UDP, making NAT device hard to identify
+                    connection end point
         -   TFTP (trivial ftp)
             -   seq and ack and retransmission like TCP
             -   checksum sent ahead **Protocol**
@@ -208,7 +209,8 @@ Operating System & Linux
             -   send fid to socket buffer
         -   compact, cannot modify data
 -   virtual memory and page replacement
-    -   motivation for virtual memory, for address translation, optimizing address translation
+    -   motivation for virtual memory, for address translation,
+        optimizing address translation
     -   page and segment
         -   page is unit, while segment is chunk
         -   logical address -\> segmentation unit -\> linear address -\>
@@ -222,10 +224,11 @@ Operating System & Linux
     -   heap + stack
 -   imported
     -   physical frames is described by `page` structure
-    -   (physical) pages are divided into zones: DMA, NORMAL, HIGHMEM(not
-        directly mapped to kernel, deprecated in 64-bit)
+    -   (physical) pages are divided into zones: DMA, NORMAL,
+        HIGHMEM(not directly mapped to kernel, deprecated in 64-bit)
         -   DMA 16MB, NORMAL 16MB-896MB (taken by kernel)
-        -   64-bit do not need because kernel address can fully cover memory
+        -   64-bit do not need because kernel address can fully cover
+            memory
     -   virtual memory allocation
         -   first 3 GB is user space
         -   highest 1 GB is kernel space
@@ -358,8 +361,8 @@ Operating System & Linux
         (the same as masking the bit vector)
 
 -   Syscall
-    -   software interrupt (exception) which signals kernel to execute the
-        exception handler
+    -   software interrupt (exception) which signals kernel to execute
+        the exception handler
     -   syscall number transferred to kernel by `eax` register, return
         through it too. parameter passed by 5 registers and user space
         pointer
@@ -375,14 +378,14 @@ Operating System & Linux
                 -   e.g. page fault when read user data
         -   preemptible
             -   new task can preempt and execute the same system call
-            -   system call must be reentrant (by different process in this
-                context)
+            -   system call must be reentrant (by different process in
+                this context)
         -   stronger than interrupt handler
             -   ??? syscall is interrupt
             -   software interrupt versus device interrupt ???
-            -   during system call, interrupt handler is first running in
-                interrupt context, then switch to kernel mode and with
-                process context
+            -   during system call, interrupt handler is first running
+                in interrupt context, then switch to kernel mode and
+                with process context
             -   traditionally interrupt refers to hardware interrupt
     -   from user perspective
         -   libc function
@@ -497,7 +500,8 @@ Operating System & Linux
     -   interview
         -   Linux的cpu 100怎么排查，top jstack，日志，gui工具
         -   Linux大文件怎么查某一行的内容
-        -   查看进程状态ps，查看cpu状态 top。查看占用端口的进程号netstat grep
+        -   查看进程状态ps，查看cpu状态 top。查看占用端口的进程号netstat
+            grep
         -   代码中遇到进程阻塞，进程僵死，内存泄漏等情况怎么排查。通过ps查询状态，分析dump文件等方式排查
 -   Booting
     -   process

@@ -2,8 +2,7 @@
     -   [Algorithm](./algorithm.md)
     -   [Basic Knowledge](./basics.md)
     -   [Programming](./programming.md)
-    -   [System Design](./system-design.md)
-        -   [MIT 6.824](./mit.6.824.md)
+    -   [System Design](../db-and-sys) *(redirected to db-and-sys)*
     -   [Infrastructure](./infra.md)
     -   [Graphics](./graphics.md)
     -   [Interview](./interview.md)
@@ -29,6 +28,8 @@
 -   [interview](https://hit-alibaba.github.io/interview/index.html): basics
 -   [system-design-interview](https://github.com/checkcheckzz/system-design-interview)
 -   [Java-blog](https://zhuanlan.zhihu.com/hinus)
+-   [gitbook-notes](https://limingji.gitbooks.io/go_notes/content/)
+-   [simple-db-blog](https://swanspouse.github.io/)
 -   Learning
     -   [Chromium\_doc\_zh](https://github.com/ahangchen/Chromium_doc_zh):
         Chromium中文文档，学习google家的架构
@@ -54,6 +55,7 @@
     -   [db-dev](https://github.com/huachaohuang/awesome-dbdev)
     -   [build-distributed-sql](https://github.com/ngaut/builddatabase)
     -   Blog
+        -   [parallel-program](http://spiritsaway.info/)
         -   [TechNotes](https://github.com/GHScan/TechNotes): Scan's
             personal technical notes
         -   [tech](https://github.com/hedengcheng/tech): programming,
@@ -61,12 +63,3 @@
         -   [Qix](https://github.com/ty4z2008/Qix): Machine
             Learning、Deep Learning、PostgreSQL、Distributed
             System、Node.Js、Golang
-
-
--   https://limingji.gitbooks.io/go_notes/content/
--   https://swanspouse.github.io/
--   https://zhuanlan.zhihu.com/p/25042028
--   https://zhuanlan.zhihu.com/p/41606961
--   http://spiritsaway.info/
--   https://preshing.com/
--   http://cuitianyi.com/
