@@ -1,4 +1,6 @@
 -   [Language](#language)
+    -   [Generic](#generic)
+        -   [Misc](#misc)
     -   [C++](#c)
         -   [Compilation, Binary and
             Assembly](#compilation-binary-and-assembly)
@@ -7,7 +9,7 @@
         -   [Multi-Thread](#multi-thread)
         -   [Template](#template)
         -   [Standard Library](#standard-library)
-        -   [Misc](#misc)
+        -   [Misc](#misc-1)
     -   [Java](#java)
         -   [Basic](#basic)
         -   [Class](#class)
@@ -28,6 +30,25 @@
 
 Language
 ========
+
+Generic
+-------
+
+### Misc
+
+-   Polymorphism: different object (instance or context) respond
+    (function) differently to same information (function input)
+    -   reference: On Understanding Types, Data Abstraction, and
+        Polymorphism
+    -   generic polymorphism
+        -   parametric polymorphism: generic parameter type
+        -   inclusion polymorphism: function applies to type and
+            sub-type
+            -   sub-type can be defined explicitly or structurally
+    -   specific polymorphism
+        -   coercion polymorphism: implicit casting
+        -   overloading / ad hoc polymorphism: function with finite
+            implementation changing w.r.t. parameter
 
 C++
 ---
