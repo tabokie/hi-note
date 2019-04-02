@@ -2,7 +2,9 @@
     -   [Query Optimization](./query.md): SQL optimizer
     -   [Concurrency](./concurrency.md): lock and transaction
     -   [Index Structure](./index.md)
-    -   [Cache](./cache.md)
+    -   [Buffer](./buffer.md)
     -   [Logging and Recovery](./log-and-recover)
     -   [Database Product](./product.md)
 -   [Distributed System](#distributed-system)
+		-		[Case Study](./distributed-case.md)
+		-		[System Design](./system-design.md)

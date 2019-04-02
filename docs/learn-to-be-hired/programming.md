@@ -2,9 +2,15 @@
     -   [Generic](#generic)
         -   [Misc](#misc)
     -   [C++](#c)
-        -   [Compilation, Binary and
-            Assembly](#compilation-binary-and-assembly)
+        -   [Compiler, Binary and
+            Assembly](#compiler-binary-and-assembly)
+            -   [Compiler](#compiler)
+            -   [Binary](#binary)
+            -   [Assembly](#assembly)
         -   [Memory](#memory)
+            -   [Type](#type)
+            -   [Management](#management)
+        -   [Exception](#exception)
         -   [Polymorphism](#polymorphism)
         -   [Multi-Thread](#multi-thread)
         -   [Template](#template)
@@ -53,9 +59,32 @@ Generic
 C++
 ---
 
-### Compilation, Binary and Assembly
+### Compiler, Binary and Assembly
 
--   Compilation
+#### Compiler
+
+-   builtin utility
+    -   project management
+        -   `#pragma once`
+    -   architecture-based instruction
+        -   `__builtin_expect(x, 1)` (GCC)
+        -   `__builtin_prefetch`
+    -   compiler generation and runtime support
+        -   runtime stack
+            -   `__builtin_return_address(n)`: the n-th caller
+                -   n = 0 is direct caller
+        -   alignment
+            -   `#pragma pack(1)` and `#pragma pack()`
+                -   min(n, longest\_member)
+            -   `__attribute__((__n__))`
+    -   function
+        -   `__builtin_popcount()`
+        -   `__builtin_ctz()`: ending zero count
+        -   `__builtin_bswap32(uint32_t)`: bytewise swap
+
+#### Binary
+
+-   binary target
     -   elf: binary under Linux
         -   header: 64 byte
             -   type: relocatable(`.o`) or executable
@@ -63,52 +92,62 @@ C++
         -   program header table (for exe)
         -   section header table
         -   vtable stored in rodata (read-only)
-    -   gdb debugger
+    -   gdb debug information
         -   `g++ -g` to compile
 -   ABI: application binary interface
     -   mangle: sourcecode id -\> ABI id
     -   RTTI `typeid` operator will return ABI id (`.name()`)
     -   demangle: cross-vendor C++ ABI
         -   `abi::__cxa_demangle`
--   implementation
-    -   function parameter
-        -   from right to left
-        -   easily fetch first of variable-length parameters
-    -   class function
-        -   `function(this, ...)`
+    -   motivation for `no default parameter`
+
+#### Assembly
+
+-   common assembly implementation
+    -   function stack
+        -   parameter
+            -   from right to left
+            -   easily fetch first of variable-length parameters
+    -   class member
+        -   function
+            -   `function(this, ...)`
+            -   `NULL.func()`
 
 ### Memory
 
--   layout
+#### Type
+
+-   partition
     -   stack
     -   heap
-    -   free store: abstract concept
+    -   free store
+        -   abstract concept, managed by `new / delete`
     -   global / static store
+        -   initialized as zero, variable in this area has default value
+            of 0
     -   constant store
 -   static object
-    -   initialization order
+    -   initialization
         -   global::ctor -\> main() -\> f() -\> f::static::ctor -\>
             f::static::dtor -\> global::dtor -\> main::exit()
-    -   name-mangling
+    -   static variable has local scope
+        -   name-mangling to generate unique identifier
     -   misc
         -   definition without `public`, `static` modifiers
--   reference
-    -   left reference: pointer
-    -   right reference: un-named variable and pointer
-        -   move constructor and copy constructor
-        -   forward reference (universal reference): `T&&`
-            -   reference collapsing
-                -   `template emplace_back(T&&)` \>
-                    `push_back(item_type&&)`
-    -   copy elision (RVO / NRVO) to optimize return by value
+
+#### Management
+
 -   allocation
     -   `malloc`: heap
-        -   `mmap` for large chunk
-        -   `brk`: break pointer in Linux
-        -   free list by C library
+        -   implementation (Linux)
+            -   `mmap` for large chunk
+            -   `brk`: break pointer in Linux
+            -   free list by C library
+    -   alloc family
+        -   `calloc`: set to zero
+        -   `realloc`: resize, `realloc(NULL,size) == malloc(size)`
     -   `new` and `delete`: free store
         -   exception safety
-            -   ctor should be `no throw`
             -   `bad_alloc`
             -   `new (std::nothrow) Obj`: surpress exception
             -   `set_new_handler( void (*p)() )`
@@ -121,12 +160,25 @@ C++
         -   call every dtor, free real chunk (p-4)
     -   placement new `new (addr) Obj`
         -   no allocation, only ctor
+        -   no corresponding delete operator, call `~Obj` directly
     -   `allocator`
         -   `stl`
             -   128 KB
             -   first: `malloc`/`free`
             -   second: built-in memory pool
         -   `tcmalloc` <TODO>
+-   reference
+    -   left reference
+        -   implemented with pointer
+        -   only a weak reference, do NOT manage variable lifetime
+    -   right reference
+        -   implemented as un-named variable and pointer
+        -   move constructor and copy constructor
+        -   forward reference (universal reference): `T&&`
+            -   reference collapsing
+            -   `template emplace_back(T&&)` \> `push_back(item_type&&)`
+        -   copy elision (RVO / NRVO) to optimize return by value
+            -   NRVO for named-return-value-optimization
 -   smart pointer
     -   `make_shared`
         -   process
@@ -166,9 +218,27 @@ C++
         -   ref-count + pointer: non-thread-safe
     -   other smart pointer
         -   `weak_ptr`
+            -   `lock() -> shared_ptr`
         -   `intrusive_ptr`
         -   `scope_ptr`: no-copy
         -   `unique_ptr`: no-copy, ownership
+
+### Exception
+
+-   destructor should be no-throw
+    -   double-exception
+        -   an exception will trigger dtor of all on-stack variable
+            before enter a catch section
+        -   if a dtor throws in this process, two exceptions coexist and
+            program terminates
+    -   resource leak
+        -   an exception only trigger dtor of formally initialized
+            member variabl, not THE dtor
+-   `noexcept`
+    -   an exception in noexcept function will trigger a termination
+    -   move ctor
+        -   sometimes a move ctor will be dodged for possible exception
+    -   dtor
 
 ### Polymorphism
 
@@ -1058,6 +1128,26 @@ Parallel Programming
     -   mutex: avoid signal loss
         -   `wait: lock, enqueue, unlock`
         -   `notify` must come with lock
+        -   lock
+                change status + signal
+                unlock
+
+            -   possible wake-up-with-no-lock-then-sleep waste for
+                waiter
+            -   wait morphing: some implementation transfers the waiting
+                thread from the condition variable's queue directly to
+                the queue of the mutex without waking it up.
+
+        -   lock
+                change status
+                unlock
+                signal
+
+            -   possible priority inversion:
+            -   lock might be acquired by low-priority worker when
+                signals, while a signal with lock will cause a mutex
+                queueing by priority
+
     -   status: avoid spurious(虚假) wakeup
     -   惊群效应
         -   `accept` before linux 2.6

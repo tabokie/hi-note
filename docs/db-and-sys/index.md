@@ -276,3 +276,10 @@ Hybrid Structure
     -   trie of HashTable, each node is a HashTable
     -   standard trie index, unspawned branch is virtualized as linked
         list of hash slot
+-   merit
+    -   combine fast query with sorted scan, amortized time complexity of O(1)
+    -   modest memory cost for bounded-length key
+    -   layed structure decrease computation cost for string hash and comparison
+-   demerit
+    -   cold startup effect
+-   reference: [portal-db](https://github.com/tabokie/portal-db)

@@ -9,23 +9,30 @@
 
 **Resources**
 
--   [hacking-the-software-engineer-interview](https://puncsky.com/hacking-the-software-engineer-interview/): system design
+-   [hacking-the-software-engineer-interview](https://puncsky.com/hacking-the-software-engineer-interview/):
+    system design
 -   Book: Elements of Programming Interviews
 -   [System Design
     Primer](https://github.com/donnemartin/system-design-primer)
 -   [Leetcode VIP](http://206.81.6.248:12306/leetcode/algorithm)
--   [Interview-Notebook](https://github.com/jianghui-galaxy/Interview-Notebook): basics
+-   [Interview-Notebook](https://github.com/jianghui-galaxy/Interview-Notebook):
+    basics
 -   [CS-Notes](https://github.com/CyC2018/CS-Notes): basics
 -   [Java-Guide](https://github.com/Snailclimb/JavaGuide)
--   [coding-interview-university](https://github.com/jwasham/coding-interview-university): algorithm, system, prep
--   [tech-interview-handbook](https://github.com/yangshun/tech-interview-handbook): same
+-   [coding-interview-university](https://github.com/jwasham/coding-interview-university):
+    algorithm, system, prep
+-   [tech-interview-handbook](https://github.com/yangshun/tech-interview-handbook):
+    same
 -   [interviews](https://github.com/kdn251/interviews): algorithm
 -   [Interview-Questions](https://github.com/rishabh115/Interview-Questions)
--   [Backend-Interview-Guide](https://github.com/CyC2018/Backend-Interview-Guide): manifest
--   [interview-questions](https://github.com/mission-peace/interview): algorithm question
+-   [Backend-Interview-Guide](https://github.com/CyC2018/Backend-Interview-Guide):
+    manifest
+-   [interview-questions](https://github.com/mission-peace/interview):
+    algorithm question
 -   [interview](https://github.com/andreis/interview): basics resources
 -   [interview](https://github.com/huihut/interview): basics
--   [interview](https://hit-alibaba.github.io/interview/index.html): basics
+-   [interview](https://hit-alibaba.github.io/interview/index.html):
+    basics
 -   [system-design-interview](https://github.com/checkcheckzz/system-design-interview)
 -   [Java-blog](https://zhuanlan.zhihu.com/hinus)
 -   [gitbook-notes](https://limingji.gitbooks.io/go_notes/content/)

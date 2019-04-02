@@ -1,6 +1,12 @@
-# Database Product
+-   [Database Product](#database-product)
+    -   [Redis](#redis)
+    -   [MySQL](#mysql)
 
-## Redis
+Database Product
+================
+
+Redis
+-----
 
 Redis内存数据库的内存指的是共享内存么
 
@@ -39,7 +45,8 @@ Redis内存数据库的内存指的是共享内存么
         -   Internal Type: dynamic string
         -   Memory Management: virtual memory layer
     -   Event-driven and IO Multiplexing
-        -   redis use single thread to provide high-available service, Reactor model
+        -   redis use single thread to provide high-available service,
+            Reactor model
         -   events
             -   file event: user socket
             -   time event: snapshot, expiration
@@ -103,7 +110,8 @@ Redis内存数据库的内存指的是共享内存么
 -   More
     -   [CS-Notes](https://github.com/CyC2018/CS-Notes/blob/master/docs/notes/Redis.md)
 
-## MySQL
+MySQL
+-----
 
 -   Transaction (InnoDB)
     -   Transaction Overview
@@ -123,10 +131,12 @@ Redis内存数据库的内存指的是共享内存么
             -   exec undo log
     -   Isolation (from strong to weak)
         -   `SERIALIZABLE`: update on same value is serialized
-            -   avoid A.select; B.insert.commit; A.select; (phantom read)
+            -   avoid A.select; B.insert.commit; A.select; (phantom
+                read)
             -   **impl**: two-phase lock
         -   `REPEATABLE_READ` (default): read from origin state
-            -   avoid A.read; B.write.commit; A.read; (non-repeatable read)
+            -   avoid A.read; B.write.commit; A.read; (non-repeatable
+                read)
             -   **impl**
                 -   in fact is `SNAPSHOT` level, no phantom read
                 -   use read-view no read lock, write use **gap lock**
@@ -146,22 +156,27 @@ Redis内存数据库的内存指的是共享内存么
             -   up\_limit: finished transaction
             -   ids: uncommitted transaction
     -   Redo Logging
-        -   Mini Transaction = lock + write (data and redo log) + commit (flush log and unlock)
+        -   Mini Transaction = lock + write (data and redo log) + commit
+            (flush log and unlock)
         -   Redo Log File
-            -   circular array with fixed-len files = FileHeader + 4 Blocks [BlockHeader + Content + BlockTrailer]
+            -   circular array with fixed-len files = FileHeader + 4
+                Blocks \[BlockHeader + Content + BlockTrailer\]
             -   lock-free append
                 -   sequence number determines write area in log buffer
-                -   background thread refreshing updates in log buffer to page cache
+                -   background thread refreshing updates in log buffer
+                    to page cache
             -   312 byte unit, no need for doublewrite
     -   Double Write: avoid partial write
         -   sequential doublewrite buffer (2 MB)
-            -   allocation: alloc(32 page + 128 page) to exaust fragment array first
+            -   allocation: alloc(32 page + 128 page) to exaust fragment
+                array first
         -   grouped write
             -   reduce `fsync()` called
     -   Lock and Deadlock
         -   record lock
             -   implemented by primary index
-            -   only query with primary index in use will trigger record lock, or fallback to table lock
+            -   only query with primary index in use will trigger record
+                lock, or fallback to table lock
 -   Storage Engine
     -   MyISAM: good for analysis
         -   index: 非聚簇索引, store pointer at B+ leaf

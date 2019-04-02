@@ -121,16 +121,39 @@ Lecture 4
 Lecture 5-6
 -----------
 
--   Overview
-    -   Procedure
+-   Raft
+    -   why majority
+        -   partition: split brain
+        -   fault-tolerant: preserve data through majority mutation
+    -   why log
+        -   execution order
+        -   operation replay
+    -   Commit
         -   leader forward request to replicas
-        -   if majority reply, leader commit
-        -   all servers commit
+        -   if majority append log, leader commit
+        -   majority run operation
         -   leader replies
     -   Election
-        -   term sequence
-        -   leader heartbeat and random timeout
+        -   term id as logical clock
+        -   trigger: leader heartbeat and random timeout
+        -   voting: 
+            -   request carry last record term-id and index, only vote for newer record
+            -   first come first serve
     -   Log Synchronization
--   Tradeoff
-    -   persistent log
-    -   ...
+        -   new leader has newest log, or it wont have large enough term-id
+        -   those with stale term-id has missing logs, cant become leader.
+        -   leader use backtracing to synchronize log to all followers
+    -   Amendment
+        -   a hidden new term comes back to override committed log
+            -   term 3: A log term 3 request and down
+            -   term 4: B sync term 2 log to majority and down
+            -   term 5: A use term 3 request to override the term 2 committed log
+        -   leader node can only commit logs containing current term
+            -   so that a hidden new term wont be leader again
+    -   Two-Phase topological mutation
+        -   first phase: old + new to old and to new ( not to n-old + n-new )
+            -   if commit, new leader must have old + new topo and majority of old + new
+        -   second phase: new to new
+
+Lecture 7
+---------

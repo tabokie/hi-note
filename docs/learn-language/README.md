@@ -1,6 +1,8 @@
 -   [Learn Language](#learn-language)
     -   [C++](#c)
         -   [Parallel Programming](#parallel-programming)
+        -   [Undefined Behaviour](#undefined-behaviour)
+        -   [functional](#functional)
     -   [Golang](#golang)
         -   [Basic Grammar](#basic-grammar)
         -   [Garbage Collection](#garbage-collection)
@@ -78,8 +80,9 @@ C++
 
 -   strict aliasing
     -   phenomenon
-        -   in`O3` mode, value of variable comes directly from last logical reference 
-            -   ```c++
+        -   in`O3` mode, value of variable comes directly from last
+            logical reference
+            -   ``` {.cpp}
                 int a;
                 int f(float *b)
                 {
@@ -98,12 +101,16 @@ C++
         -   union
         -   `char*` family pointer
         -   derived class with base class
+-   pointer aliasing
+    -   `restrict`: pointer will not point to the same memory location
+        (exclusive pointer)
 -   modifying one variable more than once between two sequence points
     -   `x = x++`
 -   function paremeter evaluation
 -   signed interger overflow is ub, unsigned is well-defined
 
 ### functional
+
 -   `target()` to restore to C-like function pointer
 
 Golang
@@ -171,7 +178,9 @@ Rust
         -   `!`
         -   `continue` in code block
     -   dynamically sized type (DST)
-        -   Rust do not accept variable-length variable like `str`, use pointer and metadata to construct DST like `&str`, `Box<str>`, `&dyn Trait`
+        -   Rust do not accept variable-length variable like `str`, use
+            pointer and metadata to construct DST like `&str`,
+            `Box<str>`, `&dyn Trait`
         -   `Sized` trait
             -   `fn normal_generic<T: Sized>(t: T)`
             -   `fn dynamic_generic<T: ?Sized>(t: &T)`
@@ -190,15 +199,18 @@ Rust
     -   no inheritance
         -   trait default implementation
         -   super trait
-            -   `trait SubTrait: SuperTrait`: impl of SubTrait must have impl SuperTrait
+            -   `trait SubTrait: SuperTrait`: impl of SubTrait must have
+                impl SuperTrait
     -   dispatch
-        -   static dispatch: genericenerate code for concrete type, generic template
+        -   static dispatch: genericenerate code for concrete type,
+            generic template
             -   `Struct<T> where T: Trait`
         -   dynamic dispatch: use trait as object
             -   dynamic type, must use reference
                 -   `Vec<Box<dyn Trait>>`
                 -   `&dyn Trait`
-            -   `object-safe` trait: use of object do not depend on object concrete type, but only behaviour
+            -   `object-safe` trait: use of object do not depend on
+                object concrete type, but only behaviour
                 -   return type != `Self`
                 -   no generic parameter
             -   lifetime inference ??
@@ -214,23 +226,26 @@ Rust
     -   borrow checker and generic lifetime
         -   lifetime on reference
             -   function
-                -   `&'a`: input variable lifetime outlives deduced lifetime
+                -   `&'a`: input variable lifetime outlives deduced
+                    lifetime
                 -   output variable has deduced lifetime
                 -   generic lifetime must be related to input variable
             -   struct
             -   lifetime elision rules
-                -   each reference parameter gets its own lifetime parameter
-                -   if there is only one parameter, it's assigned to output
-                    lifetime
-                -   if there is a self reference (`&self`), it's assigned to
+                -   each reference parameter gets its own lifetime
+                    parameter
+                -   if there is only one parameter, it's assigned to
                     output lifetime
+                -   if there is a self reference (`&self`), it's
+                    assigned to output lifetime
             -   static lifetime
                 -   literal strings
         -   lifetime subtyping
             -   `'a： 'b` means a outlives b
         -   lifetime as type bound
             -   `&'a T` only means the reference to `T` outlives `a`
-            -   `<'a, T: 'a> &'a T` now means if `T` is a reference, this reference outlives `a`
+            -   `<'a, T: 'a> &'a T` now means if `T` is a reference,
+                this reference outlives `a`
 -   protocol and contract
     -   `Index`: index should be O(1): why String can't be indexed
     -   `Clone`: Deep clone (not Rc)
@@ -253,7 +268,8 @@ Rust
                 clone protocol
         -   `RefCell`: runtime ownership
             -   interior mutability: `borrow_mut()`
-            -   more flexible runtime mutability: the structure do not own the data itself
+            -   more flexible runtime mutability: the structure do not
+                own the data itself
         -   `Arc`: atomic reference counted type
             -   implemented `Send`: transferrance across thread
 -   unsafe Rust
