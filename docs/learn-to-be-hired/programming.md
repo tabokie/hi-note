@@ -225,12 +225,37 @@ C++
 
 ### Exception
 
+-   implementation
+    -   SEH field (structure error handling)
+        -   pPrev: point to older SEH node
+        -   pHandler: unwind-table pointer
+        -   nStep: stack-unwind count
+    -   stack-unwind
+        -   unwind-table
+            -   nextIdx: point to older table entry to destruct
+            -   pDestroyer: dtor function
+            -   pObj: object offset to stack top address
+        -   nStep: table entry count, used to deduce table base address
+    -   identify catcher routine
+        -   each try block cover an unique `nStep` range
+        -   traverse try-block-table to find the proper try and catch block
+        -   block contains code pointer and catchType
+        -   if not found, goto upper caller
+    -   function stack has additional SEH (structure error handling) field
+        -   linked list to caller's SEH
+        -   type and handler
+    -   on exception
+        -   match exception
+        -   unwind stack and destruct stack variable
+            -   those variables are stored in list w.r.t. each catch block
+        -   catch handler
 -   destructor should be no-throw
     -   double-exception
         -   an exception will trigger dtor of all on-stack variable
             before enter a catch section
         -   if a dtor throws in this process, two exceptions coexist and
             program terminates
+-   constructor should be no-throw
     -   resource leak
         -   an exception only trigger dtor of formally initialized
             member variabl, not THE dtor
@@ -256,6 +281,7 @@ C++
     -   virtual inheritance
     -   call parent function: explicitly, compiler generated address
     -   `override` keyword: avoid wrong implementation
+    -   ctor can't be inherited, 
 -   function / operator overload: no (static poly)
     -   argument-dependent lookup: lookup range includes all related
         type's namespace
