@@ -70,3 +70,8 @@
         -   [Qix](https://github.com/ty4z2008/Qix): Machine
             Learning、Deep Learning、PostgreSQL、Distributed
             System、Node.Js、Golang
+
+
+-   patch
+    -   [a1](https://github.com/yangshun/tech-interview-handbook/tree/master/algorithms)
+    -   [a2](https://github.com/mission-peace/interview/wiki)
