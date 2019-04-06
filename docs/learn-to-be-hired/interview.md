@@ -107,8 +107,9 @@ Interview Record
 
 -   storage engine
     -   B-Flow tree
--   concurrent control
+-   concurrent control: latch
     -   page-level
+    -   b-link protocol
 
 #### SpecTM transactional memory
 
@@ -228,6 +229,31 @@ Interview Record
         novice
 
 **third-interview (USA-pre-facebook)**
+
+-   coding
+    -   LRU
+    -   followup
+        -   optimize parallel performance
+            -   CAS on linked-list and delete flag
+            -   generation array
+        -   optimize as a black-box
+            -   cache
+            -   hot queue
+        -   optimiza replacement algorithm
+            -   two list one sliding window
+-   project
+    -   concurrent queue
+        -   base and formal
+    -   allocator
+        -   parallel
+            -   thread local object pool and global page
+            -   pre-allocate page for threads
+        -   thread-local fragment
+            -   reclaim thread-local free-list
+
+**result-and-summary**
+
+interview has no emphasis on algorithm or knowledge, therefore seems easier.
 
 ### Bytedance
 

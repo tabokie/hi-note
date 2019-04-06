@@ -24,6 +24,129 @@ Algorithm
     -   verbal: abstracting idea
     -   mock interview
 
+### Coding
+
+#### C++
+
+-   basic structure
+
+```c++
+// list
+std::vector<int> v(count, 0);
+v.assign(count, 0);
+// stack
+std::stack<int> s;
+s.push(0);
+s.pop();
+// fifo
+std::queue<int> q;
+q.push(0);
+q.pop();
+
+```
+
+-   linked list
+
+```c++
+std::list<int> l;
+l.push_back(0);l.pop_back();
+l.push_front(0);l.pop_front();
+l.front();l.back();
+l.remove(val);
+l.insert(index, val);
+```
+
+-   hash map
+
+```c++
+std::unordered_map<string, int> map;
+map.insert(make_pair<string, int>("a", 0));
+map["a"]  = 0;
+::iterator ret = map.find("a");
+return ret->first;
+```
+
+-   tree
+
+```c++
+// no duplicate
+// rbtree
+map<key, value> tree;
+map.begin();
+map.rbegin();
+map.find();
+// heap
+priority_queue<pair, container<pair>, greater<pair>> queue; // cmp = leaf cmp root
+queue.push(pair);
+queue.pop();
+queue.top();
+```
+
+-   algorithm
+
+```c++
+next_permutation(begin(), end());
+prev_permutation(begin(), end());
+sort(begin(), end(), func);
+unique(begin(), end()); // make unique
+lower_bound(begin(), end(), value); // value as lower_bound, value <= first
+```
+
+#### Python
+
+-   list
+
+```python
+l = [1,2,3]
+l[0::-1] # l.reverse # inplace reverse
+l.append(value) # pop(index = -1)
+l.insert(0,first)
+l.remove(value)
+l.count(value)
+l.sort(key=None, reverse=False)
+if 1 in l:
+    return True
+```
+
+-   heap
+
+```python
+import * from heapq;
+data = [1,2]
+heapify(data)
+heappush(data, 1)
+print heappop(data)
+```
+
+-   map
+
+```python
+mp = {'b', 2}
+mp['a'] = 2
+del mp['a']
+mp.clear()
+mp.get('a', default=None)
+list(mp.keys()) # values
+```
+
+-   set
+
+```python
+st = {value} # not {}
+st = set((value0, value1)) # set(), set(value)
+st.add(value)
+st.update({value0, value1})
+st.remove(x) # safe: st.discard(x)
+```
+
+-   misc
+
+```python
+map(function, [1,2,3])
+map(lambda x,y: x+y, list_1, list_2)
+list(filter(lambda x: True if x>0 else False, range(100)))
+```
+
 ### Basic Data Structure
 
 -   Linked List
@@ -194,6 +317,35 @@ Algorithm
         -   doubly-linked list
         -   lru-k
             -   history queue and priority queue
+        -   2Q
+            -   fifo (first access) and lru (multiple access)
+            -   remove fifo if fifo is full, else remove lru tail
+        -   LIRS
+        -   Oracle LRU [blog](https://www.cnblogs.com/cyjb/archive/2012/11/16/LruCache.html)
+            -   hot queue and cold queue
+                -   put: add to hot front if empty, evict then add to cold front if full
+                -   get: maintain reference count
+                -   evict: traverse from cold tail, reset and move to hot front if multiple access (hot end became cold)
+            -   use circular queue to implement
+        -   segmented hash-table and linked-list
+            -   Java ConcurrentHashMap
+        -   timestamped hash-table
+            -   lazy eviction: possibility of OOM
+            -   batch eviction: halt the put
+
+#### Graph
+
+-   Minimal Spanning Tree
+    -   traverse edge by length, add if no circle
+    -   union-set
+-   Shortest Path
+    -   Dijkstra
+        -   link to nearest point
+        -   update all neighbors
+    -   Bellman-Ford
+        -   update n-1 times
+-   Topological Sort
+    -   use in-degree = 0 to select first node
 
 #### Dynamic Programming
 
@@ -301,7 +453,61 @@ Algorithm
     -   negative
     -   overflow
 
-### Misc Insights
+### High-Level Insights
 
--   use naive recursive as fallback solution
--   your solution is no worse than others
+-   generic optimization approach
+    -   HashMap: space for O(n) time
+    -   In-Place: O(1) space
+-   generic solution approach
+    -   reinterpret your target
+        -   e.g.
+            -   等差数列 = `2 * b = a + c`
+            -   sequence sum of 0 = two same prefix sum
+-   divide-and-conquer
+-   bucket / modular space
+    -   solve sub-problem in limited scope
+-   dual pivot
+-   dynamic programming
+    -   use naive recursive as fallback solution
+-   inverse problem / sieve method
+    -   e.g.
+        -   prime number
+
+### Unsorted
+
+-   classics:
+    -   min in interval
+        -   segment and two pass
+        -   monotonic queue with fixed length
+    -   lru, lfu
+    -   query interval
+    -   interval intersection
+        -   scan line
+            -   by 1 step
+            -   by interval end point
+        -   with interval queryer
+-   in-place sort
+-   stable sort with O(nlogn): binary search tree
+    -   (preserve relative order)
+    -   bubble sort (n2)
+    -   insert sort (n2)
+    -   merge sort
+    -   radix sort
+-   k-th or median of fixed-size array
+    -   partition of quicksort
+    -   two heap in logN and 1
+    -   binary search tree in both logN
+-   big data median with unknown size
+    -   accurate implementation
+        -   two heap with unlimited size
+            -   filter in opposite heap then pop and insert
+            -   swap if confict the partition rule
+            -   `priority_queue<int, vector<int>, std::smaller<int>>`: big heap
+        -   heaps of heap
+        -   binary tree, VAL tree
+-   bitmask
+    -   Extract lowest set bit: `s & (-s)`
+    -   Extract lowest unset bit: `~s & (s + 1)`
+-   optimize under parallel workloads
+    -   分流
+    -   维护中间状态一致性 以获得无锁并发
