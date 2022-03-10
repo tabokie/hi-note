@@ -157,3 +157,12 @@ Lecture 5-6
 
 Lecture 7
 ---------
+
+Lecture 8
+---------
+
+-   Zookeeper
+    -   Motivation: generic master service
+        -   master acting as coordinator
+        -   fault-tolerent
+        -   high-performance

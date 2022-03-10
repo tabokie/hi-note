@@ -423,6 +423,22 @@ list(filter(lambda x: True if x>0 else False, range(100)))
 -   Sort
     -   mergesort
 
+### Misc
+
+-   majority
+    -   e.g.
+        -   find element that counts more than `[n/2]`
+        -   find elements that counts more than `[n/3]`
+    -   solution
+        -   sort
+        -   bucket: majority is preserved in modular space
+        -   recursive: should be majority in either partition
+        -   shrink
+        -   Boyer-Moore S(1) T(n)
+            -   counter and candidate: count-- when met diff, else ++, until count == 0
+                -   only guarantee majority will be candidate, not inverse
+                -   need second pass to ensure
+
 ### Corner Case
 
 -   `uint32_t`
@@ -511,3 +527,6 @@ list(filter(lambda x: True if x>0 else False, range(100)))
 -   optimize under parallel workloads
     -   分流
     -   维护中间状态一致性 以获得无锁并发
+
+-   hash
+    -   treat complex object as number

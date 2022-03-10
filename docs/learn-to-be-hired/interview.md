@@ -709,6 +709,110 @@ turn down for bad interview taste and dull work.
 
 -   offer after 1 week, 6000 per month ;(
 
+### Microsoft
+
+#### MSRA Wind-Riding Project
+
+**System Research Group**
+
+-   Frequency Top-K
+    -   Hash + Heap
+    -   Trie
+        -   my HashTrie
+        -   hard to serialize
+-   Stream Median
+    -   two heap
+    -   serialization
+        -   compaction and virtual linkage
+    -   B-Tree like heap ?
+
+**Service Intellegence Group**
+
+-   first interview
+    -   backpack problem
+        -   non-optimal solution using Greedy
+        -   test case
+    -   B Tree -> HashTrie
+        -   test case
+-   second interview
+    -   find cluster in 2D matrix
+        -   use union set on 2D
+        -   DFS
+
+**Network Group**
+
+-   provide a policy to resolve crossing problem (deadlock)
+    -   `f(cars...)`, `cars{waited time}`
+    -   add fallback index
+-   light detection routine for this chatroom
+    -   cost first
+        -   laser
+        -   wifi
+        -   door
+        -   power hub
+    -   test
+        -   determinant
+
+#### MSRA System Research Group - Database
+
+
+**first-interview (Liang CHEN jeche@microsoft.com)**
+
+-   coplus
+    -   thread and coroutine
+        -   machine and user
+        -   event-driven
+    -   other language
+        -   pony
+-   sBase
+-   optimize binary tree on SSD
+    -   SSD: only allow set and chunk-reset
+    -   copy-on-write
+        -   time = O(logN), no longer than a balanced tree on normal disk
+    -   space reclaimation method
+        -   pool by height, max node = height node * 2
+            -   did not consider SSD property
+        -   reclaim near-empty chunk
+            -   factor = k node
+            -   time = k * logk, since each moving cause another link's modification
+    -   summary
+        -   LSM-Tree, GC algorithm
+        -   new hardware: FPGA, NVM
+-   vision of this group
+    -   standardize
+    -   modularize
+        -   hardware offload
+        -   better scalability and isolation for distributed service
+            -   isolation for better load balance and specialization
+        -   hot-plug service support for existing application
+    -   challenge: performance degration for decoupling
+-   topics in this group
+    -   transaction
+    -   runtime
+        -   standardized runtime support for multiple storage engine
+            -   table, jv, json, graph
+            -   CosmosDB
+        -   e.g. vectorization and native code for SQL
+    -   hardware acceleration
+    -   storage
+-   QA: research or development
+    -   personal note: r+d non-divisable
+    -   as developer: make something new, developer must think as researcher
+    -   as researcher: make something real
+
+**second-interview (Qianxi Zhang qianxi.zhang@microsoft.com)**
+
+-   sBase
+    -   B+ tree
+    -   LSM tree
+        -   compaction
+-   cache
+    -   leveled cache
+        -   access locality and pattern
+        -   balance between cost and performance
+    -   replacement algorithm: LRU
+        -   doubly-linked list
+
 Job Experience
 --------------
 
@@ -726,7 +830,7 @@ Job Experience
             to put modification plan with safe freezing on exception.
             [github-1](https://github.com/xiaozzz/PingCAP),
             [github-2](https://github.com/deqianzou/PingCAP-TaskQueue)
-        -   2018-10: design and implement a data structure for Least
+        -   2018-10: design   implement a data structure for Least
             Recently Used (LRU) cache. It should support the following
             operations: get and put. O(1).
             [github](https://github.com/panxiande/PingCap)

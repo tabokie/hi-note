@@ -1138,6 +1138,9 @@ Parallel Programming
         -   drawback:
             -   need OS context
                 -   CAS first
+    -   Futex: userspace lock manager with help of coroutine
+        -   interface: `val()`, `wait(val, timeout)`, `wake(n)`
+        -   implementation: fifo
     -   ReadWriteLock
         -   rlock: lock(r); r++; if (r == 1) lock(w); // only one locks
         -   wlock: lock(w);
@@ -1193,6 +1196,7 @@ Parallel Programming
 
 -   Concurrent Timer
 -   Data Structure
+    -   hazard pointer
     -   lock-free hash table
         -   lock-free by linked table
         -   leveled hash table
@@ -1200,4 +1204,10 @@ Parallel Programming
         -   lamport fifo
         -   linux kfifo
             -   two-power size to avoid modular
+    -   read-copy-update (RCU) rbtree
+    -   skiplist
+        -   unrolled skiplist
+        -   cache-friendly skiplist
+        -   lock-free skiplist
+    -   parallel LRU
 -   Debug parallel program
